@@ -1,0 +1,3 @@
+cn.smart.wms.framework.security.config.WmsSecurityAutoConfiguration
+cn.smart.wms.framework.security.config.WmsWebSecurityConfigurerAdapter
+cn.smart.wms.framework.operatelog.config.WmsOperateLogConfiguration
