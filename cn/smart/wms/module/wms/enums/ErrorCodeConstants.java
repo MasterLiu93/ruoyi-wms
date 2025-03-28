@@ -1,1 +1,0 @@
-    ErrorCode BATCH_INVENTORY_NOT_EXISTS = new ErrorCode(1_011_004_000, "批次库存不存在"); 
