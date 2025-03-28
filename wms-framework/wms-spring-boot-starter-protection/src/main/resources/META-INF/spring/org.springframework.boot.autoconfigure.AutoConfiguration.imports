@@ -1,0 +1,4 @@
+cn.smart.wms.framework.idempotent.config.WmsIdempotentConfiguration
+cn.smart.wms.framework.lock4j.config.WmsLock4jConfiguration
+cn.smart.wms.framework.ratelimiter.config.WmsRateLimiterConfiguration
+cn.smart.wms.framework.signature.config.WmsApiSignatureAutoConfiguration

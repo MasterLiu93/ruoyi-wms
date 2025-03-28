@@ -1,0 +1,2 @@
+cn.smart.wms.framework.quartz.config.WmsQuartzAutoConfiguration
+cn.smart.wms.framework.quartz.config.WmsAsyncAutoConfiguration

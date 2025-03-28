@@ -1,0 +1,2 @@
+cn.smart.wms.framework.tracer.config.WmsTracerAutoConfiguration
+cn.smart.wms.framework.tracer.config.WmsMetricsAutoConfiguration

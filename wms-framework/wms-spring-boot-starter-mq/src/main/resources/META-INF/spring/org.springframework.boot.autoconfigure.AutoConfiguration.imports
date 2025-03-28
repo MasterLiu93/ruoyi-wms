@@ -1,0 +1,3 @@
+cn.smart.wms.framework.mq.redis.config.WmsRedisMQProducerAutoConfiguration
+cn.smart.wms.framework.mq.redis.config.WmsRedisMQConsumerAutoConfiguration
+cn.smart.wms.framework.mq.rabbitmq.config.WmsRabbitMQAutoConfiguration
