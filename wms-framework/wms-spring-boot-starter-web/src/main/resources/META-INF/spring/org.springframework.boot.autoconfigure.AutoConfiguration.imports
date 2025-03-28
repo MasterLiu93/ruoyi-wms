@@ -1,0 +1,6 @@
+cn.smart.wms.framework.apilog.config.WmsApiLogAutoConfiguration
+cn.smart.wms.framework.jackson.config.WmsJacksonAutoConfiguration
+cn.smart.wms.framework.swagger.config.WmsSwaggerAutoConfiguration
+cn.smart.wms.framework.web.config.WmsWebAutoConfiguration
+cn.smart.wms.framework.xss.config.WmsXssAutoConfiguration
+cn.smart.wms.framework.banner.config.WmsBannerAutoConfiguration

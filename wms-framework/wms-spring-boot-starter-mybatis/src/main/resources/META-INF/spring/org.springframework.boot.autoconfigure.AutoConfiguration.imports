@@ -1,0 +1,3 @@
+cn.smart.wms.framework.datasource.config.WmsDataSourceAutoConfiguration
+cn.smart.wms.framework.mybatis.config.WmsMybatisAutoConfiguration
+cn.smart.wms.framework.translate.config.WmsTranslateAutoConfiguration

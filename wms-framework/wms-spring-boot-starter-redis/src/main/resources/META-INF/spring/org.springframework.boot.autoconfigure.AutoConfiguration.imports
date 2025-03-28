@@ -1,0 +1,2 @@
+cn.smart.wms.framework.redis.config.WmsRedisAutoConfiguration
+cn.smart.wms.framework.redis.config.WmsCacheAutoConfiguration
