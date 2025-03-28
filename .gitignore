@@ -51,3 +51,6 @@ rebel.xml
 application-my.yaml
 
 /wms-ui-app/unpackage/
+
+# Ignore SQL files containing sensitive credentials
+sql/*.sql
