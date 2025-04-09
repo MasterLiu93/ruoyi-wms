@@ -3,14 +3,9 @@ import request from '@/config/axios'
 // 仓库 VO
 export interface WarehouseVO {
   id: number // 仓库ID
-  warehouseCode: string // 仓库编码
-  warehouseName: string // 仓库名称
-  warehouseType: number // 仓库类型(0-原材料 1-半成品 2-成品 3-退货)
-  area: number // 面积(平方米)
-  address: string // 地址
-  chargePerson: string // 负责人
-  phone: string // 联系电话
-  status: number // 状态(0-正常 1-禁用)
+  name: string // 仓库名称
+  code: string // 仓库编码
+  status: number // 状态(0-禁用 1-启用)
   remark: string // 备注
 }
 
@@ -45,4 +40,4 @@ export const WarehouseApi = {
   exportWarehouse: async (params) => {
     return await request.download({ url: `/wms/warehouse/export-excel`, params })
   },
-}
+}

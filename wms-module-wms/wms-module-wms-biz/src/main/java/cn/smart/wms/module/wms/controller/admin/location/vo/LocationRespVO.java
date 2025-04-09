@@ -1,11 +1,11 @@
 package cn.smart.wms.module.wms.controller.admin.location.vo;
 
+import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
+import com.alibaba.excel.annotation.ExcelProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
-import java.util.*;
-import org.springframework.format.annotation.DateTimeFormat;
+import lombok.Data;
+
 import java.time.LocalDateTime;
-import com.alibaba.excel.annotation.*;
 
 @Schema(description = "管理后台 - 库位 Response VO")
 @Data
@@ -27,6 +27,21 @@ public class LocationRespVO {
     @Schema(description = "所属货架ID", requiredMode = Schema.RequiredMode.REQUIRED, example = "29106")
     @ExcelProperty("所属货架ID")
     private Long rackId;
+    
+    @Schema(description = "所属货架名称")
+    private String rackName;
+    
+    @Schema(description = "所属货区ID")
+    private Long areaId;
+    
+    @Schema(description = "所属货区名称")
+    private String areaName;
+    
+    @Schema(description = "所属仓库ID")
+    private Long warehouseId;
+    
+    @Schema(description = "所属仓库名称")
+    private String warehouseName;
 
     @Schema(description = "库位类型(0-普通 1-快检 2-退货)", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
     @ExcelProperty("库位类型(0-普通 1-快检 2-退货)")

@@ -17,64 +17,10 @@
           class="!w-240px"
         />
       </el-form-item>
-      <el-form-item label="移库单明细ID" prop="moveOrderDetailId">
-        <el-input
-          v-model="queryParams.moveOrderDetailId"
-          placeholder="请输入移库单明细ID"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
       <el-form-item label="物料ID" prop="itemId">
         <el-input
           v-model="queryParams.itemId"
           placeholder="请输入物料ID"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="批次ID" prop="batchId">
-        <el-input
-          v-model="queryParams.batchId"
-          placeholder="请输入批次ID"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="源库位ID" prop="fromLocationId">
-        <el-input
-          v-model="queryParams.fromLocationId"
-          placeholder="请输入源库位ID"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="目标库位ID" prop="toLocationId">
-        <el-input
-          v-model="queryParams.toLocationId"
-          placeholder="请输入目标库位ID"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="移动数量" prop="count">
-        <el-input
-          v-model="queryParams.count"
-          placeholder="请输入移动数量"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="备注" prop="remark">
-        <el-input
-          v-model="queryParams.remark"
-          placeholder="请输入备注"
           clearable
           @keyup.enter="handleQuery"
           class="!w-240px"

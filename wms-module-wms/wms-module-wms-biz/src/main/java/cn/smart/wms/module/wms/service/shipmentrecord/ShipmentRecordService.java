@@ -1,11 +1,11 @@
 package cn.smart.wms.module.wms.service.shipmentrecord;
 
-import java.util.*;
-import javax.validation.*;
-import cn.smart.wms.module.wms.controller.admin.shipmentrecord.vo.*;
-import cn.smart.wms.module.wms.dal.dataobject.shipmentrecord.ShipmentRecordDO;
 import cn.smart.wms.framework.common.pojo.PageResult;
-import cn.smart.wms.framework.common.pojo.PageParam;
+import cn.smart.wms.module.wms.controller.admin.shipmentrecord.vo.ShipmentRecordPageReqVO;
+import cn.smart.wms.module.wms.controller.admin.shipmentrecord.vo.ShipmentRecordSaveReqVO;
+import cn.smart.wms.module.wms.dal.dataobject.shipmentrecord.ShipmentRecordDO;
+
+import javax.validation.Valid;
 
 /**
  * 出库操作记录 Service 接口

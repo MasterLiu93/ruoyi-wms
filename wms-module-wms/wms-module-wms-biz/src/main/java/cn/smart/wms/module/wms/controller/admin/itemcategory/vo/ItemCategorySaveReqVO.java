@@ -2,7 +2,7 @@ package cn.smart.wms.module.wms.controller.admin.itemcategory.vo;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
-import java.util.*;
+
 import javax.validation.constraints.*;
 
 @Schema(description = "管理后台 - 物料分类新增/修改 Request VO")
@@ -12,8 +12,7 @@ public class ItemCategorySaveReqVO {
     @Schema(description = "分类ID", requiredMode = Schema.RequiredMode.REQUIRED, example = "116")
     private Long id;
 
-    @Schema(description = "分类编码", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotEmpty(message = "分类编码不能为空")
+    @Schema(description = "分类编码")
     private String categoryCode;
 
     @Schema(description = "分类名称", requiredMode = Schema.RequiredMode.REQUIRED, example = "王五")

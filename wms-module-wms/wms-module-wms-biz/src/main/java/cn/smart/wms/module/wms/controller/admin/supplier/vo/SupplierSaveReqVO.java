@@ -2,7 +2,7 @@ package cn.smart.wms.module.wms.controller.admin.supplier.vo;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
-import java.util.*;
+
 import javax.validation.constraints.*;
 
 @Schema(description = "管理后台 - 供应商新增/修改 Request VO")
@@ -12,8 +12,7 @@ public class SupplierSaveReqVO {
     @Schema(description = "供应商ID", requiredMode = Schema.RequiredMode.REQUIRED, example = "14386")
     private Long id;
 
-    @Schema(description = "供应商编码", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotEmpty(message = "供应商编码不能为空")
+    @Schema(description = "供应商编码")
     private String supplierCode;
 
     @Schema(description = "供应商名称", requiredMode = Schema.RequiredMode.REQUIRED, example = "张三")

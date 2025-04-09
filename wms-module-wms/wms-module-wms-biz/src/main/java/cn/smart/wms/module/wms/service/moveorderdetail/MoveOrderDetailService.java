@@ -5,7 +5,6 @@ import javax.validation.*;
 import cn.smart.wms.module.wms.controller.admin.moveorderdetail.vo.*;
 import cn.smart.wms.module.wms.dal.dataobject.moveorderdetail.MoveOrderDetailDO;
 import cn.smart.wms.framework.common.pojo.PageResult;
-import cn.smart.wms.framework.common.pojo.PageParam;
 
 /**
  * 移库单明细 Service 接口
@@ -51,5 +50,29 @@ public interface MoveOrderDetailService {
      * @return 移库单明细分页
      */
     PageResult<MoveOrderDetailDO> getMoveOrderDetailPage(MoveOrderDetailPageReqVO pageReqVO);
-
+    
+    /**
+     * 根据移库单ID获取移库单明细列表
+     *
+     * @param moveOrderId 移库单ID
+     * @return 移库单明细列表
+     */
+    List<MoveOrderDetailDO> getMoveOrderDetailListByMoveOrderId(Long moveOrderId);
+    
+    /**
+     * 批量创建移库单明细
+     *
+     * @param details 明细列表
+     * @return 创建的明细ID列表
+     */
+    List<Long> batchCreateMoveOrderDetail(List<MoveOrderDetailSaveReqVO> details);
+    
+    /**
+     * 更新移库单明细状态
+     *
+     * @param id 明细ID
+     * @param realCount 实际移库数量
+     * @param status 状态
+     */
+    void updateMoveOrderDetailStatus(Long id, Integer realCount, Integer status);
 }

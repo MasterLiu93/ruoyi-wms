@@ -5,7 +5,6 @@ import javax.validation.*;
 import cn.smart.wms.module.wms.controller.admin.itemcategory.vo.*;
 import cn.smart.wms.module.wms.dal.dataobject.itemcategory.ItemCategoryDO;
 import cn.smart.wms.framework.common.pojo.PageResult;
-import cn.smart.wms.framework.common.pojo.PageParam;
 
 /**
  * 物料分类 Service 接口
@@ -51,5 +50,14 @@ public interface ItemCategoryService {
      * @return 物料分类分页
      */
     PageResult<ItemCategoryDO> getItemCategoryPage(ItemCategoryPageReqVO pageReqVO);
-
+    
+    /**
+     * 获取物料分类树形结构
+     *
+     * @param categoryName 分类名称，模糊匹配，可为空
+     * @param categoryCode 分类编码，模糊匹配，可为空
+     * @param status 状态，可为空
+     * @return 物料分类树形结构列表
+     */
+    List<ItemCategoryTreeRespVO> getItemCategoryTree(String categoryName, String categoryCode, Integer status);
 }

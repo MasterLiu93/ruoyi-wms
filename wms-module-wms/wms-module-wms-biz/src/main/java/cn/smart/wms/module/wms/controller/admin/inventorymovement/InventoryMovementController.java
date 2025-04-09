@@ -8,13 +8,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Operation;
 
-import javax.validation.constraints.*;
 import javax.validation.*;
 import javax.servlet.http.*;
 import java.util.*;
 import java.io.IOException;
 
-import cn.smart.wms.framework.common.pojo.PageParam;
 import cn.smart.wms.framework.common.pojo.PageResult;
 import cn.smart.wms.framework.common.pojo.CommonResult;
 import cn.smart.wms.framework.common.util.object.BeanUtils;
@@ -85,11 +83,21 @@ public class InventoryMovementController {
     @ApiAccessLog(operateType = EXPORT)
     public void exportInventoryMovementExcel(@Valid InventoryMovementPageReqVO pageReqVO,
               HttpServletResponse response) throws IOException {
-        pageReqVO.setPageSize(PageParam.PAGE_SIZE_NONE);
+        // 设置为导出全部数据
+        pageReqVO.setPageNo(1);
+        pageReqVO.setPageSize(Integer.MAX_VALUE);
+        
+        // 查询数据
         List<InventoryMovementDO> list = inventoryMovementService.getInventoryMovementPage(pageReqVO).getList();
+        
+        // 转换为 VO 对象
+        List<InventoryMovementRespVO> voList = new ArrayList<>();
+        for (InventoryMovementDO movement : list) {
+            voList.add(BeanUtils.toBean(movement, InventoryMovementRespVO.class));
+        }
+        
         // 导出 Excel
-        ExcelUtils.write(response, "库存移动记录.xls", "数据", InventoryMovementRespVO.class,
-                        BeanUtils.toBean(list, InventoryMovementRespVO.class));
+        ExcelUtils.write(response, "库存移动记录.xls", "数据", InventoryMovementRespVO.class, voList);
     }
 
 }

@@ -17,81 +17,41 @@
           class="!w-240px"
         />
       </el-form-item>
-      <el-form-item label="仓库ID" prop="warehouseId">
-        <el-input
-          v-model="queryParams.warehouseId"
-          placeholder="请输入仓库ID"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="盘点类型" prop="checkType">
+      <el-form-item label="仓库" prop="warehouseId">
         <el-select
-          v-model="queryParams.checkType"
-          placeholder="请选择盘点类型"
+          v-model="queryParams.warehouseId"
+          placeholder="请选择仓库"
           clearable
+          filterable
           class="!w-240px"
         >
-          <el-option label="请选择字典生成" value="" />
+          <el-option
+            v-for="item in warehouseOptions"
+            :key="item.id"
+            :label="item.warehouseName || `仓库${item.id}`"
+            :value="Number(item.id)"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="盘点类型" prop="checkType">
+        <el-select v-model="queryParams.checkType" placeholder="请选择盘点类型" clearable class="!w-240px">
+          <el-option
+            v-for="dict in getIntDictOptions(DICT_TYPE.WMS_CHECK_TYPE)"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
         </el-select>
       </el-form-item>
       <el-form-item label="盘点状态" prop="checkStatus">
-        <el-select
-          v-model="queryParams.checkStatus"
-          placeholder="请选择盘点状态"
-          clearable
-          class="!w-240px"
-        >
-          <el-option label="请选择字典生成" value="" />
+        <el-select v-model="queryParams.checkStatus" placeholder="请选择盘点状态" clearable class="!w-240px">
+          <el-option
+            v-for="dict in getIntDictOptions(DICT_TYPE.WMS_CHECK_STATUS)"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
         </el-select>
-      </el-form-item>
-      <el-form-item label="盘点总数" prop="totalCount">
-        <el-input
-          v-model="queryParams.totalCount"
-          placeholder="请输入盘点总数"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="已盘点数" prop="checkedCount">
-        <el-input
-          v-model="queryParams.checkedCount"
-          placeholder="请输入已盘点数"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="差异数" prop="differenceCount">
-        <el-input
-          v-model="queryParams.differenceCount"
-          placeholder="请输入差异数"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="备注" prop="remark">
-        <el-input
-          v-model="queryParams.remark"
-          placeholder="请输入备注"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="创建时间" prop="createTime">
-        <el-date-picker
-          v-model="queryParams.createTime"
-          value-format="YYYY-MM-DD HH:mm:ss"
-          type="daterange"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          :default-time="[new Date('1 00:00:00'), new Date('1 23:59:59')]"
-          class="!w-220px"
-        />
       </el-form-item>
       <el-form-item>
         <el-button @click="handleQuery"><Icon icon="ep:search" class="mr-5px" /> 搜索</el-button>
@@ -120,15 +80,43 @@
   <!-- 列表 -->
   <ContentWrap>
     <el-table v-loading="loading" :data="list" :stripe="true" :show-overflow-tooltip="true">
-      <el-table-column label="盘点单ID" align="center" prop="id" />
-      <el-table-column label="盘点单号" align="center" prop="checkNo" />
-      <el-table-column label="仓库ID" align="center" prop="warehouseId" />
-      <el-table-column label="盘点类型" align="center" prop="checkType" />
-      <el-table-column label="盘点状态" align="center" prop="checkStatus" />
-      <el-table-column label="盘点总数" align="center" prop="totalCount" />
-      <el-table-column label="已盘点数" align="center" prop="checkedCount" />
-      <el-table-column label="差异数" align="center" prop="differenceCount" />
-      <el-table-column label="备注" align="center" prop="remark" />
+      <el-table-column label="盘点单号" align="center" prop="checkNo" min-width="120px" />
+      <el-table-column label="仓库" align="center" min-width="120px">
+        <template #default="{ row }">
+          {{ getWarehouseName(row.warehouseId) }}
+        </template>
+      </el-table-column>
+      <el-table-column label="盘点类型" align="center" prop="checkType" min-width="100px">
+        <template #default="{ row }">
+          <dict-tag :type="DICT_TYPE.WMS_CHECK_TYPE" :value="row.checkType" />
+        </template>
+      </el-table-column>
+      <el-table-column label="盘点状态" align="center" prop="checkStatus" min-width="100px">
+        <template #default="{ row }">
+          <dict-tag :type="DICT_TYPE.WMS_CHECK_STATUS" :value="row.checkStatus" />
+        </template>
+      </el-table-column>
+      <el-table-column label="盘点进度" align="center" min-width="180px">
+        <template #default="{ row }">
+          <div>
+            <el-progress 
+              :percentage="row.totalCount ? Math.round(row.checkedCount / row.totalCount * 100) : 0"
+              :status="row.checkStatus === 2 ? 'success' : ''"
+            />
+          </div>
+          <div class="text-gray-400 text-sm">
+            已盘点: {{ row.checkedCount }} / {{ row.totalCount }}
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column label="差异数" align="center" min-width="100px">
+        <template #default="{ row }">
+          <el-tag :type="row.differenceCount > 0 ? 'warning' : 'success'">
+            {{ row.differenceCount }}
+          </el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="备注" align="center" prop="remark" min-width="120px" show-overflow-tooltip />
       <el-table-column
         label="创建时间"
         align="center"
@@ -136,9 +124,18 @@
         :formatter="dateFormatter"
         width="180px"
       />
-      <el-table-column label="操作" align="center" min-width="120px">
+      <el-table-column label="操作" align="center" min-width="180px">
         <template #default="scope">
           <el-button
+            link
+            type="primary"
+            @click="handleViewDetail(scope.row.id)"
+            v-hasPermi="['wms:inventory-check:query']"
+          >
+            查看
+          </el-button>
+          <el-button
+            v-if="scope.row.checkStatus === 0"
             link
             type="primary"
             @click="openForm('update', scope.row.id)"
@@ -147,12 +144,49 @@
             编辑
           </el-button>
           <el-button
+            v-if="scope.row.checkStatus === 0"
             link
             type="danger"
             @click="handleDelete(scope.row.id)"
             v-hasPermi="['wms:inventory-check:delete']"
           >
             删除
+          </el-button>
+          <el-button
+            v-if="scope.row.checkStatus === 0"
+            link
+            type="success"
+            @click="handleStart(scope.row.id)"
+            v-hasPermi="['wms:inventory-check:start']"
+          >
+            开始盘点
+          </el-button>
+          <el-button
+            v-if="scope.row.checkStatus === 1"
+            link
+            type="warning"
+            @click="handleFinish(scope.row.id)"
+            v-hasPermi="['wms:inventory-check:finish']"
+          >
+            完成盘点
+          </el-button>
+          <el-button
+            v-if="scope.row.checkStatus === 1"
+            link
+            type="warning"
+            @click="handleCancel(scope.row.id)"
+            v-hasPermi="['wms:inventory-check:update']"
+          >
+            取消盘点
+          </el-button>
+          <el-button
+            v-if="scope.row.checkStatus === 2"
+            link
+            type="danger"
+            @click="handleAdjust(scope.row.id)"
+            v-hasPermi="['wms:inventory-check:update']"
+          >
+            调整库存
           </el-button>
         </template>
       </el-table-column>
@@ -175,8 +209,10 @@ import { dateFormatter } from '@/utils/formatTime'
 import download from '@/utils/download'
 import { InventoryCheckApi, InventoryCheckVO } from '@/api/wms/inventorycheck'
 import InventoryCheckForm from './InventoryCheckForm.vue'
+import { DICT_TYPE, getIntDictOptions } from '@/utils/dict'
+import { WarehouseApi } from '@/api/wms/warehouse'
 
-/** 库存盘点单 列表 */
+/** 库存盘点 列表 */
 defineOptions({ name: 'InventoryCheck' })
 
 const message = useMessage() // 消息弹窗
@@ -185,6 +221,7 @@ const { t } = useI18n() // 国际化
 const loading = ref(true) // 列表的加载中
 const list = ref<InventoryCheckVO[]>([]) // 列表的数据
 const total = ref(0) // 列表的总页数
+const warehouseOptions = ref<any[]>([]) // 仓库选项
 const queryParams = reactive({
   pageNo: 1,
   pageSize: 10,
@@ -200,6 +237,33 @@ const queryParams = reactive({
 })
 const queryFormRef = ref() // 搜索的表单
 const exportLoading = ref(false) // 导出的加载中
+
+
+/** 获取仓库名称 */
+const getWarehouseName = (warehouseId: number) => {
+  const warehouse = warehouseOptions.value.find(item => item.id === warehouseId)
+  return warehouse ? warehouse.warehouseName || `仓库${warehouse.id}` : '-'
+}
+
+/** 加载基础数据 */
+/** 获取仓库选项 */
+const getWarehouseOptions = async () => {
+  try {
+    // 使用分页接口获取所有仓库数据
+    const result = await WarehouseApi.getWarehousePage({
+      pageNo: 1,
+      pageSize: 100 // 获取足够多的数据
+    })
+
+    if (result && result.list && Array.isArray(result.list)) {
+      // 直接使用返回的仓库数据，不做字段映射
+      warehouseOptions.value = result.list
+    }
+  } catch (error) {
+    console.error('获取仓库列表失败:', error)
+    warehouseOptions.value = []
+  }
+}
 
 /** 查询列表 */
 const getList = async () => {
@@ -259,8 +323,55 @@ const handleExport = async () => {
   }
 }
 
+/** 开始盘点 */
+const handleStart = async (id: number) => {
+  try {
+    await message.confirm('是否确认开始盘点？')
+    await InventoryCheckApi.startCheck(id)
+    message.success('开始盘点成功')
+    await getList()
+  } catch {}
+}
+
+/** 完成盘点 */
+const handleFinish = async (id: number) => {
+  try {
+    await message.confirm('是否确认完成盘点？')
+    await InventoryCheckApi.completeCheck({ id })
+    message.success('完成盘点成功')
+    await getList()
+  } catch {}
+}
+
+/** 取消盘点 */
+const handleCancel = async (id: number) => {
+  try {
+    await message.confirm('是否确认取消盘点？')
+    await InventoryCheckApi.cancelCheck({ id })
+    message.success('取消盘点成功')
+    await getList()
+  } catch {}
+}
+
+/** 调整库存 */
+const handleAdjust = async (id: number) => {
+  try {
+    await message.confirm('是否确认调整库存差异？')
+    await InventoryCheckApi.adjustInventory({ id })
+    message.success('调整库存成功')
+    await getList()
+  } catch {}
+}
+
+/** 查看明细 */
+const router = useRouter()
+const handleViewDetail = (id: number) => {
+  router.push({ name: 'InventoryCheckDetail', params: { id } })
+}
+
 /** 初始化 **/
 onMounted(() => {
+  getWarehouseOptions()
   getList()
 })
 </script>

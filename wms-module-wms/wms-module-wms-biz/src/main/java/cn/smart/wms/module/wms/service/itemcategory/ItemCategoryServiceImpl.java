@@ -3,14 +3,15 @@ package cn.smart.wms.module.wms.service.itemcategory;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
+
 import cn.smart.wms.module.wms.controller.admin.itemcategory.vo.*;
 import cn.smart.wms.module.wms.dal.dataobject.itemcategory.ItemCategoryDO;
 import cn.smart.wms.framework.common.pojo.PageResult;
-import cn.smart.wms.framework.common.pojo.PageParam;
 import cn.smart.wms.framework.common.util.object.BeanUtils;
+import cn.smart.wms.framework.mybatis.core.query.LambdaQueryWrapperX;
 
 import cn.smart.wms.module.wms.dal.mysql.itemcategory.ItemCategoryMapper;
 
@@ -70,5 +71,36 @@ public class ItemCategoryServiceImpl implements ItemCategoryService {
     public PageResult<ItemCategoryDO> getItemCategoryPage(ItemCategoryPageReqVO pageReqVO) {
         return itemCategoryMapper.selectPage(pageReqVO);
     }
-
+    
+    @Override
+    public List<ItemCategoryTreeRespVO> getItemCategoryTree(String categoryName, String categoryCode, Integer status) {
+        // 1. 查询所有物料分类
+        List<ItemCategoryDO> list = itemCategoryMapper.selectList(
+            new LambdaQueryWrapperX<ItemCategoryDO>()
+                .likeIfPresent(ItemCategoryDO::getCategoryName, categoryName)
+                .eqIfPresent(ItemCategoryDO::getCategoryCode, categoryCode)
+                .eqIfPresent(ItemCategoryDO::getStatus, status)
+                .orderByAsc(ItemCategoryDO::getSort));
+        
+        if (list.isEmpty()) {
+            return Collections.emptyList();
+        }
+        
+        // 2. 转换为 VO 对象
+        List<ItemCategoryTreeRespVO> itemCategoryVOList = BeanUtils.toBean(list, ItemCategoryTreeRespVO.class);
+        
+        // 3. 构建树形结构
+        Map<Long, List<ItemCategoryTreeRespVO>> parentIdChildrenMap = itemCategoryVOList.stream()
+                .collect(Collectors.groupingBy(ItemCategoryTreeRespVO::getParentId));
+        
+        // 4. 设置子节点，并返回根节点
+        for (ItemCategoryTreeRespVO categoryVO : itemCategoryVOList) {
+            categoryVO.setChildren(parentIdChildrenMap.getOrDefault(categoryVO.getId(), Collections.emptyList()));
+        }
+        
+        // 5. 返回根节点(即parentId为0或null的节点)
+        return itemCategoryVOList.stream()
+                .filter(categoryVO -> categoryVO.getParentId() == null || categoryVO.getParentId() == 0)
+                .collect(Collectors.toList());
+    }
 }

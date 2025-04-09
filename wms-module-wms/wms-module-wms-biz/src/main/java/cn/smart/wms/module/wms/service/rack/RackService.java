@@ -1,11 +1,13 @@
 package cn.smart.wms.module.wms.service.rack;
 
-import java.util.*;
-import javax.validation.*;
-import cn.smart.wms.module.wms.controller.admin.rack.vo.*;
-import cn.smart.wms.module.wms.dal.dataobject.rack.RackDO;
 import cn.smart.wms.framework.common.pojo.PageResult;
-import cn.smart.wms.framework.common.pojo.PageParam;
+import cn.smart.wms.module.wms.controller.admin.rack.vo.RackPageReqVO;
+import cn.smart.wms.module.wms.controller.admin.rack.vo.RackSaveReqVO;
+import cn.smart.wms.module.wms.dal.dataobject.rack.RackDO;
+
+import javax.validation.Valid;
+import java.util.List;
+import java.util.Set;
 
 /**
  * 货架 Service 接口
@@ -51,5 +53,21 @@ public interface RackService {
      * @return 货架分页
      */
     PageResult<RackDO> getRackPage(RackPageReqVO pageReqVO);
+
+    /**
+     * 根据货区ID获取货架列表
+     *
+     * @param areaId 货区ID
+     * @return 货架列表
+     */
+    List<RackDO> getRackListByAreaId(Long areaId);
+
+    /**
+     * 获取货架列表
+     *
+     * @param ids 货架ID集合
+     * @return 货架列表
+     */
+    List<RackDO> getRackList(Set<Long> ids);
 
 }

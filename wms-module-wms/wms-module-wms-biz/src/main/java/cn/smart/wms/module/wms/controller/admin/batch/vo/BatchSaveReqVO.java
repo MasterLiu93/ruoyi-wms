@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.util.*;
 import javax.validation.constraints.*;
 
 @Schema(description = "管理后台 - 批次信息新增/修改 Request VO")

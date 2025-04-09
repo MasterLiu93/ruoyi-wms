@@ -15,7 +15,12 @@
           clearable
           class="!w-240px"
         >
-          <el-option label="请选择字典生成" value="" />
+          <el-option
+            v-for="dict in getIntDictOptions(DICT_TYPE.WMS_MOVE_TYPE)"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
         </el-select>
       </el-form-item>
       <el-form-item label="移动单号" prop="movementNo">
@@ -27,107 +32,55 @@
           class="!w-240px"
         />
       </el-form-item>
-      <el-form-item label="仓库ID" prop="warehouseId">
-        <el-input
-          v-model="queryParams.warehouseId"
-          placeholder="请输入仓库ID"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="库位ID" prop="locationId">
-        <el-input
-          v-model="queryParams.locationId"
-          placeholder="请输入库位ID"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="物料ID" prop="itemId">
-        <el-input
-          v-model="queryParams.itemId"
-          placeholder="请输入物料ID"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="移动数量" prop="count">
-        <el-input
-          v-model="queryParams.count"
-          placeholder="请输入移动数量"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="移动前数量" prop="beforeCount">
-        <el-input
-          v-model="queryParams.beforeCount"
-          placeholder="请输入移动前数量"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="移动后数量" prop="afterCount">
-        <el-input
-          v-model="queryParams.afterCount"
-          placeholder="请输入移动后数量"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="业务类型" prop="businessType">
+      <el-form-item label="仓库" prop="warehouseId">
         <el-select
-          v-model="queryParams.businessType"
-          placeholder="请选择业务类型"
+          v-model="queryParams.warehouseId"
+          placeholder="请选择仓库"
+          clearable
+          class="!w-240px"
+          @change="handleWarehouseChange"
+        >
+          <el-option
+            v-for="item in warehouseOptions"
+            :key="item.id"
+            :label="item.warehouseName || `仓库${item.id}`"
+            :value="Number(item.id)"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="库位" prop="locationId">
+        <el-select
+          v-model="queryParams.locationId"
+          placeholder="请选择库位"
           clearable
           class="!w-240px"
         >
-          <el-option label="请选择字典生成" value="" />
+          <el-option
+            v-for="item in locationOptions"
+            :key="item.id"
+            :label="item.locationName"
+            :value="item.id"
+          />
         </el-select>
       </el-form-item>
-      <el-form-item label="业务单ID" prop="businessId">
-        <el-input
-          v-model="queryParams.businessId"
-          placeholder="请输入业务单ID"
+      <el-form-item label="物料" prop="itemId">
+        <el-select
+          v-model="queryParams.itemId"
+          placeholder="请选择物料"
           clearable
-          @keyup.enter="handleQuery"
           class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="业务明细ID" prop="businessDetailId">
-        <el-input
-          v-model="queryParams.businessDetailId"
-          placeholder="请输入业务明细ID"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="备注" prop="remark">
-        <el-input
-          v-model="queryParams.remark"
-          placeholder="请输入备注"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="创建时间" prop="createTime">
-        <el-date-picker
-          v-model="queryParams.createTime"
-          value-format="YYYY-MM-DD HH:mm:ss"
-          type="daterange"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          :default-time="[new Date('1 00:00:00'), new Date('1 23:59:59')]"
-          class="!w-220px"
-        />
+          filterable
+        >
+          <el-option
+            v-for="item in itemOptions"
+            :key="item.id"
+            :label="item.itemName"
+            :value="item.id"
+          >
+            <span>{{ item.itemName }}</span>
+            <span class="text-gray-400 ml-2">({{ item.itemCode }})</span>
+          </el-option>
+        </el-select>
       </el-form-item>
       <el-form-item>
         <el-button @click="handleQuery"><Icon icon="ep:search" class="mr-5px" /> 搜索</el-button>
@@ -156,19 +109,39 @@
   <!-- 列表 -->
   <ContentWrap>
     <el-table v-loading="loading" :data="list" :stripe="true" :show-overflow-tooltip="true">
-      <el-table-column label="移动ID" align="center" prop="id" />
-      <el-table-column label="移动类型" align="center" prop="movementType" />
-      <el-table-column label="移动单号" align="center" prop="movementNo" />
-      <el-table-column label="仓库ID" align="center" prop="warehouseId" />
-      <el-table-column label="库位ID" align="center" prop="locationId" />
-      <el-table-column label="物料ID" align="center" prop="itemId" />
-      <el-table-column label="移动数量" align="center" prop="count" />
-      <el-table-column label="移动前数量" align="center" prop="beforeCount" />
-      <el-table-column label="移动后数量" align="center" prop="afterCount" />
-      <el-table-column label="业务类型" align="center" prop="businessType" />
-      <el-table-column label="业务单ID" align="center" prop="businessId" />
-      <el-table-column label="业务明细ID" align="center" prop="businessDetailId" />
-      <el-table-column label="备注" align="center" prop="remark" />
+      <el-table-column label="移动单号" align="center" prop="movementNo" min-width="120px" />
+      <el-table-column label="移动类型" align="center" prop="movementType" min-width="100px">
+        <template #default="scope">
+          <dict-tag :type="DICT_TYPE.WMS_MOVE_TYPE" :value="scope.row.movementType" />
+        </template>
+      </el-table-column>
+      <el-table-column label="仓库/库位" align="center" min-width="180px">
+        <template #default="scope">
+          <div>{{ scope.row.warehouseName }}</div>
+          <div class="text-gray-400 text-sm">{{ scope.row.locationCode }}</div>
+        </template>
+      </el-table-column>
+      <el-table-column label="物料信息" align="center" min-width="200px">
+        <template #default="scope">
+          <div>{{ scope.row.itemName }}</div>
+          <div class="text-gray-400 text-sm">{{ scope.row.itemCode }}</div>
+        </template>
+      </el-table-column>
+      <el-table-column label="移动数量" align="center" min-width="180px">
+        <template #default="scope">
+          <div>移动: {{ scope.row.count }}</div>
+          <div class="text-gray-400 text-sm">
+            {{ scope.row.beforeCount }} → {{ scope.row.afterCount }}
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column label="业务信息" align="center" min-width="180px">
+        <template #default="scope">
+          <div>{{ getDictLabel(DICT_TYPE.WMS_MOVE_TYPE, scope.row.businessType) }}</div>
+          <div class="text-gray-400 text-sm">{{ scope.row.businessNo }}</div>
+        </template>
+      </el-table-column>
+      <el-table-column label="备注" align="center" prop="remark" min-width="120px" show-overflow-tooltip />
       <el-table-column
         label="创建时间"
         align="center"
@@ -215,6 +188,10 @@ import { dateFormatter } from '@/utils/formatTime'
 import download from '@/utils/download'
 import { InventoryMovementApi, InventoryMovementVO } from '@/api/wms/inventorymovement'
 import InventoryMovementForm from './InventoryMovementForm.vue'
+import { DICT_TYPE, getIntDictOptions, getDictLabel } from '@/utils/dict'
+import { WarehouseApi } from '@/api/wms/warehouse'
+import { ItemApi, ItemVO } from '@/api/wms/item'
+import { LocationApi, LocationVO } from '@/api/wms/location'
 
 /** 库存移动记录 列表 */
 defineOptions({ name: 'InventoryMovement' })
@@ -244,6 +221,9 @@ const queryParams = reactive({
 })
 const queryFormRef = ref() // 搜索的表单
 const exportLoading = ref(false) // 导出的加载中
+const locationOptions = ref<LocationVO[]>([]) // 库位选项
+const itemOptions = ref<ItemVO[]>([]) // 物料选项
+const warehouseOptions = ref<any[]>([]) // 仓库下拉选项
 
 /** 查询列表 */
 const getList = async () => {
@@ -303,8 +283,43 @@ const handleExport = async () => {
   }
 }
 
+/** 获取仓库选项 */
+const getWarehouseOptions = async () => {
+  try {
+    // 使用分页接口获取所有仓库数据
+    const result = await WarehouseApi.getWarehousePage({
+      pageNo: 1,
+      pageSize: 100 // 获取足够多的数据
+    })
+
+    if (result && result.list && Array.isArray(result.list)) {
+      // 直接使用返回的仓库数据，不做字段映射
+      warehouseOptions.value = result.list
+    }
+  } catch (error) {
+    console.error('获取仓库列表失败:', error)
+    warehouseOptions.value = []
+  }
+}
+
+/** 处理仓库变化 */
+const handleWarehouseChange = async () => {
+  queryParams.locationId = undefined
+  locationOptions.value = []
+  if (!queryParams.warehouseId) return
+  
+  // 加载库位列表
+  const locationRes = await LocationApi.getLocationPage({ 
+    pageNo: 1, 
+    pageSize: 100,
+    warehouseId: queryParams.warehouseId 
+  })
+  locationOptions.value = locationRes.list
+}
+
 /** 初始化 **/
 onMounted(() => {
+  getWarehouseOptions()
   getList()
 })
 </script>

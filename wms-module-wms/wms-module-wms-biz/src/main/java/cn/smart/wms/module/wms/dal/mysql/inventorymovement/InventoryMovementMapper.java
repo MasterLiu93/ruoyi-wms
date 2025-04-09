@@ -3,10 +3,10 @@ package cn.smart.wms.module.wms.dal.mysql.inventorymovement;
 import java.util.*;
 
 import cn.smart.wms.framework.common.pojo.PageResult;
-import cn.smart.wms.framework.mybatis.core.query.LambdaQueryWrapperX;
 import cn.smart.wms.framework.mybatis.core.mapper.BaseMapperX;
 import cn.smart.wms.module.wms.dal.dataobject.inventorymovement.InventoryMovementDO;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import cn.smart.wms.module.wms.controller.admin.inventorymovement.vo.*;
 
 /**
@@ -17,22 +17,26 @@ import cn.smart.wms.module.wms.controller.admin.inventorymovement.vo.*;
 @Mapper
 public interface InventoryMovementMapper extends BaseMapperX<InventoryMovementDO> {
 
+    InventoryMovementDO selectByIdWithDetails(@Param("id") Long id);
+
+    List<InventoryMovementDO> selectPageWithDetails(@Param("reqVO") InventoryMovementPageReqVO reqVO, 
+                                                   @Param("offset") Integer offset);
+
+    Long selectPageCount(@Param("reqVO") InventoryMovementPageReqVO reqVO);
+
     default PageResult<InventoryMovementDO> selectPage(InventoryMovementPageReqVO reqVO) {
-        return selectPage(reqVO, new LambdaQueryWrapperX<InventoryMovementDO>()
-                .eqIfPresent(InventoryMovementDO::getMovementType, reqVO.getMovementType())
-                .eqIfPresent(InventoryMovementDO::getMovementNo, reqVO.getMovementNo())
-                .eqIfPresent(InventoryMovementDO::getWarehouseId, reqVO.getWarehouseId())
-                .eqIfPresent(InventoryMovementDO::getLocationId, reqVO.getLocationId())
-                .eqIfPresent(InventoryMovementDO::getItemId, reqVO.getItemId())
-                .eqIfPresent(InventoryMovementDO::getCount, reqVO.getCount())
-                .eqIfPresent(InventoryMovementDO::getBeforeCount, reqVO.getBeforeCount())
-                .eqIfPresent(InventoryMovementDO::getAfterCount, reqVO.getAfterCount())
-                .eqIfPresent(InventoryMovementDO::getBusinessType, reqVO.getBusinessType())
-                .eqIfPresent(InventoryMovementDO::getBusinessId, reqVO.getBusinessId())
-                .eqIfPresent(InventoryMovementDO::getBusinessDetailId, reqVO.getBusinessDetailId())
-                .eqIfPresent(InventoryMovementDO::getRemark, reqVO.getRemark())
-                .betweenIfPresent(InventoryMovementDO::getCreateTime, reqVO.getCreateTime())
-                .orderByDesc(InventoryMovementDO::getId));
+        // 计算分页参数
+        Integer offset = (reqVO.getPageNo() - 1) * reqVO.getPageSize();
+        
+        // 查询总数
+        Long total = selectPageCount(reqVO);
+        if (total == 0) {
+            return new PageResult<>(Collections.emptyList(), 0L);
+        }
+        
+        // 查询分页数据
+        List<InventoryMovementDO> list = selectPageWithDetails(reqVO, offset);
+        return new PageResult<>(list, total);
     }
 
 }

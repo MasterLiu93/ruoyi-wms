@@ -8,7 +8,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Operation;
 
-import javax.validation.constraints.*;
 import javax.validation.*;
 import javax.servlet.http.*;
 import java.util.*;
@@ -18,6 +17,7 @@ import cn.smart.wms.framework.common.pojo.PageParam;
 import cn.smart.wms.framework.common.pojo.PageResult;
 import cn.smart.wms.framework.common.pojo.CommonResult;
 import cn.smart.wms.framework.common.util.object.BeanUtils;
+import cn.smart.wms.framework.idgenerator.core.IdGeneratorFactory;
 import static cn.smart.wms.framework.common.pojo.CommonResult.success;
 
 import cn.smart.wms.framework.excel.core.util.ExcelUtils;
@@ -37,11 +37,18 @@ public class ItemCategoryController {
 
     @Resource
     private ItemCategoryService itemCategoryService;
+    
+    @Resource
+    private IdGeneratorFactory idGeneratorFactory;
 
     @PostMapping("/create")
     @Operation(summary = "创建物料分类")
     @PreAuthorize("@ss.hasPermission('wms:item-category:create')")
     public CommonResult<Long> createItemCategory(@Valid @RequestBody ItemCategorySaveReqVO createReqVO) {
+        // 自动生成物料分类编码，不再依赖前端传入
+        if (createReqVO.getCategoryCode() == null || createReqVO.getCategoryCode().isEmpty()) {
+            createReqVO.setCategoryCode(idGeneratorFactory.generateCustomCode("WLFL", 1));
+        }
         return success(itemCategoryService.createItemCategory(createReqVO));
     }
 
@@ -77,6 +84,17 @@ public class ItemCategoryController {
     public CommonResult<PageResult<ItemCategoryRespVO>> getItemCategoryPage(@Valid ItemCategoryPageReqVO pageReqVO) {
         PageResult<ItemCategoryDO> pageResult = itemCategoryService.getItemCategoryPage(pageReqVO);
         return success(BeanUtils.toBean(pageResult, ItemCategoryRespVO.class));
+    }
+
+    @GetMapping("/tree")
+    @Operation(summary = "获得物料分类树形结构")
+    @PreAuthorize("@ss.hasPermission('wms:item-category:query')")
+    public CommonResult<List<ItemCategoryTreeRespVO>> getItemCategoryTree(
+            @RequestParam(value = "categoryName", required = false) String categoryName,
+            @RequestParam(value = "categoryCode", required = false) String categoryCode,
+            @RequestParam(value = "status", required = false) Integer status) {
+        List<ItemCategoryTreeRespVO> tree = itemCategoryService.getItemCategoryTree(categoryName, categoryCode, status);
+        return success(tree);
     }
 
     @GetMapping("/export-excel")

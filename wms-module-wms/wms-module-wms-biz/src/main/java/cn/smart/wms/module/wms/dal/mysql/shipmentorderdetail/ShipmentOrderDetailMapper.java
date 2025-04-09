@@ -1,7 +1,5 @@
 package cn.smart.wms.module.wms.dal.mysql.shipmentorderdetail;
 
-import java.util.*;
-
 import cn.smart.wms.framework.common.pojo.PageResult;
 import cn.smart.wms.framework.mybatis.core.query.LambdaQueryWrapperX;
 import cn.smart.wms.framework.mybatis.core.mapper.BaseMapperX;

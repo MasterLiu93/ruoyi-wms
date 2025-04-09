@@ -5,7 +5,6 @@ import javax.validation.*;
 import cn.smart.wms.module.wms.controller.admin.receiptrecord.vo.*;
 import cn.smart.wms.module.wms.dal.dataobject.receiptrecord.ReceiptRecordDO;
 import cn.smart.wms.framework.common.pojo.PageResult;
-import cn.smart.wms.framework.common.pojo.PageParam;
 
 /**
  * 入库操作记录 Service 接口
@@ -51,5 +50,13 @@ public interface ReceiptRecordService {
      * @return 入库操作记录分页
      */
     PageResult<ReceiptRecordDO> getReceiptRecordPage(ReceiptRecordPageReqVO pageReqVO);
+    
+    /**
+     * 获取已有入库记录的明细ID列表
+     *
+     * @param receiptOrderId 入库单ID
+     * @return 明细ID列表
+     */
+    List<Long> getDetailIdsWithRecords(Long receiptOrderId);
 
 }

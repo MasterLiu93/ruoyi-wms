@@ -1,13 +1,11 @@
 package cn.smart.wms.module.wms.dal.mysql.warehouse;
 
-import java.util.*;
-
 import cn.smart.wms.framework.common.pojo.PageResult;
-import cn.smart.wms.framework.mybatis.core.query.LambdaQueryWrapperX;
 import cn.smart.wms.framework.mybatis.core.mapper.BaseMapperX;
+import cn.smart.wms.framework.mybatis.core.query.LambdaQueryWrapperX;
+import cn.smart.wms.module.wms.controller.admin.warehouse.vo.WarehousePageReqVO;
 import cn.smart.wms.module.wms.dal.dataobject.warehouse.WarehouseDO;
 import org.apache.ibatis.annotations.Mapper;
-import cn.smart.wms.module.wms.controller.admin.warehouse.vo.*;
 
 /**
  * 仓库 Mapper
@@ -31,5 +29,14 @@ public interface WarehouseMapper extends BaseMapperX<WarehouseDO> {
                 .betweenIfPresent(WarehouseDO::getCreateTime, reqVO.getCreateTime())
                 .orderByDesc(WarehouseDO::getId));
     }
-
+    
+    /**
+     * 根据仓库编码查询仓库
+     *
+     * @param warehouseCode 仓库编码
+     * @return 仓库
+     */
+    default WarehouseDO selectByWarehouseCode(String warehouseCode) {
+        return selectOne(WarehouseDO::getWarehouseCode, warehouseCode);
+    }
 }

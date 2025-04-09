@@ -2,8 +2,7 @@ package cn.smart.wms.module.wms.controller.admin.area.vo;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
-import java.util.*;
-import org.springframework.format.annotation.DateTimeFormat;
+
 import java.time.LocalDateTime;
 import com.alibaba.excel.annotation.*;
 
@@ -27,6 +26,9 @@ public class AreaRespVO {
     @Schema(description = "所属仓库ID", requiredMode = Schema.RequiredMode.REQUIRED, example = "27526")
     @ExcelProperty("所属仓库ID")
     private Long warehouseId;
+    
+    @Schema(description = "所属仓库名称")
+    private String warehouseName;
 
     @Schema(description = "货区类型(0-存储区 1-暂存区 2-拣货区 3-出货区)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2")
     @ExcelProperty("货区类型(0-存储区 1-暂存区 2-拣货区 3-出货区)")

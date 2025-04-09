@@ -1,13 +1,11 @@
 package cn.smart.wms.module.wms.dal.mysql.batch;
 
-import java.util.*;
-
 import cn.smart.wms.framework.common.pojo.PageResult;
-import cn.smart.wms.framework.mybatis.core.query.LambdaQueryWrapperX;
 import cn.smart.wms.framework.mybatis.core.mapper.BaseMapperX;
+import cn.smart.wms.framework.mybatis.core.query.LambdaQueryWrapperX;
+import cn.smart.wms.module.wms.controller.admin.batch.vo.BatchPageReqVO;
 import cn.smart.wms.module.wms.dal.dataobject.batch.BatchDO;
 import org.apache.ibatis.annotations.Mapper;
-import cn.smart.wms.module.wms.controller.admin.batch.vo.*;
 
 /**
  * 批次信息 Mapper
@@ -37,5 +35,14 @@ public interface BatchMapper extends BaseMapperX<BatchDO> {
                 .betweenIfPresent(BatchDO::getCreateTime, reqVO.getCreateTime())
                 .orderByDesc(BatchDO::getId));
     }
-
+    
+    /**
+     * 根据批次号查询批次
+     *
+     * @param batchNo 批次号
+     * @return 批次对象
+     */
+    default BatchDO selectByBatchNo(String batchNo) {
+        return selectOne(BatchDO::getBatchNo, batchNo);
+    }
 }

@@ -7,8 +7,8 @@
       label-width="100px"
       v-loading="formLoading"
     >
-      <el-form-item label="仓库编码" prop="warehouseCode">
-        <el-input v-model="formData.warehouseCode" placeholder="请输入仓库编码" />
+      <el-form-item label="仓库编码" prop="warehouseCode" v-if="formType === 'update'">
+        <el-input v-model="formData.warehouseCode" placeholder="请输入仓库编码" disabled />
       </el-form-item>
       <el-form-item label="仓库名称" prop="warehouseName">
         <el-input v-model="formData.warehouseName" placeholder="请输入仓库名称" />
@@ -81,7 +81,6 @@ const formData = ref({
   remark: undefined,
 })
 const formRules = reactive({
-  warehouseCode: [{ required: true, message: '仓库编码不能为空', trigger: 'blur' }],
   warehouseName: [{ required: true, message: '仓库名称不能为空', trigger: 'blur' }],
   warehouseType: [{ required: true, message: '仓库类型不能为空', trigger: 'change' }],
   address: [{ required: true, message: '地址不能为空', trigger: 'blur' }],

@@ -1,9 +1,10 @@
 package cn.smart.wms.module.wms.controller.admin.location.vo;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
-import java.util.*;
-import javax.validation.constraints.*;
+import lombok.Data;
+
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 @Schema(description = "管理后台 - 库位新增/修改 Request VO")
 @Data
@@ -12,8 +13,7 @@ public class LocationSaveReqVO {
     @Schema(description = "库位ID", requiredMode = Schema.RequiredMode.REQUIRED, example = "1201")
     private Long id;
 
-    @Schema(description = "库位编码", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotEmpty(message = "库位编码不能为空")
+    @Schema(description = "库位编码")
     private String locationCode;
 
     @Schema(description = "库位名称", requiredMode = Schema.RequiredMode.REQUIRED, example = "赵六")

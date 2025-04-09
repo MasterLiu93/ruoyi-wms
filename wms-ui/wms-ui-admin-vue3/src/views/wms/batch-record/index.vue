@@ -18,13 +18,13 @@
         />
       </el-form-item>
       <el-form-item label="移动类型" prop="movementType">
-        <el-select
-          v-model="queryParams.movementType"
-          placeholder="请选择移动类型"
-          clearable
-          class="!w-240px"
-        >
-          <el-option label="请选择字典生成" value="" />
+        <el-select v-model="queryParams.movementType" placeholder="请选择移动类型" clearable class="!w-240px">
+          <el-option
+            v-for="dict in getIntDictOptions(DICT_TYPE.WMS_MOVEMENT_TYPE)"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
         </el-select>
       </el-form-item>
       <el-form-item label="移动记录ID" prop="movementId">
@@ -34,53 +34,6 @@
           clearable
           @keyup.enter="handleQuery"
           class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="操作数量" prop="count">
-        <el-input
-          v-model="queryParams.count"
-          placeholder="请输入操作数量"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="操作前数量" prop="beforeCount">
-        <el-input
-          v-model="queryParams.beforeCount"
-          placeholder="请输入操作前数量"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="操作后数量" prop="afterCount">
-        <el-input
-          v-model="queryParams.afterCount"
-          placeholder="请输入操作后数量"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="备注" prop="remark">
-        <el-input
-          v-model="queryParams.remark"
-          placeholder="请输入备注"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="创建时间" prop="createTime">
-        <el-date-picker
-          v-model="queryParams.createTime"
-          value-format="YYYY-MM-DD HH:mm:ss"
-          type="daterange"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          :default-time="[new Date('1 00:00:00'), new Date('1 23:59:59')]"
-          class="!w-220px"
         />
       </el-form-item>
       <el-form-item>
@@ -164,6 +117,7 @@ import { dateFormatter } from '@/utils/formatTime'
 import download from '@/utils/download'
 import { BatchRecordApi, BatchRecordVO } from '@/api/wms/batchrecord'
 import BatchRecordForm from './BatchRecordForm.vue'
+import { DICT_TYPE, getIntDictOptions } from '@/utils/dict'
 
 /** 批次操作记录 列表 */
 defineOptions({ name: 'BatchRecord' })

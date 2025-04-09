@@ -2,8 +2,6 @@ package cn.smart.wms.module.wms.enums;
 
 import cn.smart.wms.framework.common.exception.ErrorCode;
 
-import cn.smart.wms.framework.common.exception.ErrorCode;
-
 /**
  * WMS 错误码枚举类
  * <p>
@@ -33,31 +31,42 @@ public interface ErrorCodeConstants {
     ErrorCode SUPPLIER_STATUS_ERROR = new ErrorCode(1002000103, "供应商状态异常");
 
     // ========== 物料与分类 1002001xxx ==========
+    // 物料相关错误码
     ErrorCode ITEM_NOT_EXISTS = new ErrorCode(1002001001, "物料不存在");
     ErrorCode ITEM_CODE_EXISTS = new ErrorCode(1002001002, "物料编码已存在");
     ErrorCode ITEM_STATUS_ERROR = new ErrorCode(1002001003, "物料状态异常");
+    
+    // 物料分类相关错误码
     ErrorCode ITEM_CATEGORY_NOT_EXISTS = new ErrorCode(1002001101, "物料分类不存在");
     ErrorCode ITEM_CATEGORY_CODE_EXISTS = new ErrorCode(1002001102, "物料分类编码已存在");
     ErrorCode ITEM_CATEGORY_HAS_CHILDREN = new ErrorCode(1002001103, "物料分类下存在子分类");
     ErrorCode ITEM_CATEGORY_HAS_ITEMS = new ErrorCode(1002001104, "物料分类下存在物料");
 
     // ========== 仓库与库位 1002002xxx ==========
+    // 仓库相关错误码
     ErrorCode WAREHOUSE_NOT_EXISTS = new ErrorCode(1002002001, "仓库不存在");
     ErrorCode WAREHOUSE_CODE_EXISTS = new ErrorCode(1002002002, "仓库编码已存在");
     ErrorCode WAREHOUSE_STATUS_ERROR = new ErrorCode(1002002003, "仓库状态异常");
+    ErrorCode WAREHOUSE_HAS_AREA = new ErrorCode(1002002004, "仓库下存在货区");
 
+    // 货区相关错误码
     ErrorCode AREA_NOT_EXISTS = new ErrorCode(1002002101, "货区不存在");
     ErrorCode AREA_CODE_EXISTS = new ErrorCode(1002002102, "货区编码已存在");
     ErrorCode AREA_STATUS_ERROR = new ErrorCode(1002002103, "货区状态异常");
+    ErrorCode AREA_HAS_RACK = new ErrorCode(1002002104, "货区下存在货架");
 
+    // 货架相关错误码
     ErrorCode RACK_NOT_EXISTS = new ErrorCode(1002002201, "货架不存在");
     ErrorCode RACK_CODE_EXISTS = new ErrorCode(1002002202, "货架编码已存在");
     ErrorCode RACK_STATUS_ERROR = new ErrorCode(1002002203, "货架状态异常");
+    ErrorCode RACK_HAS_LOCATION = new ErrorCode(1002002204, "货架下存在库位");
 
+    // 库位相关错误码
     ErrorCode LOCATION_NOT_EXISTS = new ErrorCode(1002002301, "库位不存在");
     ErrorCode LOCATION_CODE_EXISTS = new ErrorCode(1002002302, "库位编码已存在");
     ErrorCode LOCATION_STATUS_ERROR = new ErrorCode(1002002303, "库位状态异常");
     ErrorCode LOCATION_OCCUPIED = new ErrorCode(1002002304, "库位已被占用");
+    ErrorCode LOCATION_HAS_INVENTORY = new ErrorCode(1002002305, "库位存在库存");
 
     // ========== 批次管理 1002003xxx ==========
     ErrorCode BATCH_NOT_EXISTS = new ErrorCode(1002003001, "批次不存在");

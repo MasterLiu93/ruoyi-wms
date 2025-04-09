@@ -1,11 +1,11 @@
 package cn.smart.wms.module.wms.controller.admin.inventorycheck.vo;
 
+import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
+import com.alibaba.excel.annotation.ExcelProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
-import java.util.*;
-import org.springframework.format.annotation.DateTimeFormat;
+import lombok.Data;
+
 import java.time.LocalDateTime;
-import com.alibaba.excel.annotation.*;
 
 @Schema(description = "管理后台 - 库存盘点单 Response VO")
 @Data
@@ -23,6 +23,10 @@ public class InventoryCheckRespVO {
     @Schema(description = "仓库ID", requiredMode = Schema.RequiredMode.REQUIRED, example = "1135")
     @ExcelProperty("仓库ID")
     private Long warehouseId;
+
+    @Schema(description = "仓库名称", requiredMode = Schema.RequiredMode.REQUIRED)
+    @ExcelProperty("仓库名称")
+    private String warehouseName;
 
     @Schema(description = "盘点类型(0-全部盘点 1-部分盘点)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2")
     @ExcelProperty("盘点类型(0-全部盘点 1-部分盘点)")
@@ -51,5 +55,17 @@ public class InventoryCheckRespVO {
     @Schema(description = "创建时间", requiredMode = Schema.RequiredMode.REQUIRED)
     @ExcelProperty("创建时间")
     private LocalDateTime createTime;
+
+    @Schema(description = "创建人", requiredMode = Schema.RequiredMode.REQUIRED)
+    @ExcelProperty("创建人")
+    private String creator;
+
+    @Schema(description = "更新时间", requiredMode = Schema.RequiredMode.REQUIRED)
+    @ExcelProperty("更新时间")
+    private LocalDateTime updateTime;
+
+    @Schema(description = "更新人", requiredMode = Schema.RequiredMode.REQUIRED)
+    @ExcelProperty("更新人")
+    private String updater;
 
 }

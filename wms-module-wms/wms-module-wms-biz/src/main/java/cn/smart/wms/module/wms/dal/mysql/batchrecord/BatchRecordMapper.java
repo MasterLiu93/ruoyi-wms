@@ -1,13 +1,11 @@
 package cn.smart.wms.module.wms.dal.mysql.batchrecord;
 
-import java.util.*;
-
 import cn.smart.wms.framework.common.pojo.PageResult;
-import cn.smart.wms.framework.mybatis.core.query.LambdaQueryWrapperX;
 import cn.smart.wms.framework.mybatis.core.mapper.BaseMapperX;
+import cn.smart.wms.framework.mybatis.core.query.LambdaQueryWrapperX;
+import cn.smart.wms.module.wms.controller.admin.batchrecord.vo.BatchRecordPageReqVO;
 import cn.smart.wms.module.wms.dal.dataobject.batchrecord.BatchRecordDO;
 import org.apache.ibatis.annotations.Mapper;
-import cn.smart.wms.module.wms.controller.admin.batchrecord.vo.*;
 
 /**
  * 批次操作记录 Mapper

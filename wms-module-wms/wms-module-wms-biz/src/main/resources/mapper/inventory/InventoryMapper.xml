@@ -9,4 +9,146 @@
         文档可见：https://www.iocoder.cn/MyBatis/x-plugins/
      -->
 
+    <sql id="selectColumns">
+        i.id,
+        i.warehouse_id,
+        i.location_id,
+        i.item_id,
+        i.stock_count,
+        i.available_count,
+        i.locked_count,
+        i.status,
+        i.remark,
+        i.creator,
+        i.create_time,
+        i.updater,
+        i.update_time,
+        i.deleted,
+        w.warehouse_name AS warehouseName,
+        l.location_name AS locationName,
+        m.item_name AS itemName,
+        m.item_code AS itemCode,
+        m.item_type AS itemType,
+        m.spec AS spec,
+        m.unit AS unit
+    </sql>
+
+    <sql id="joinTables">
+        LEFT JOIN wms_warehouse w ON i.warehouse_id = w.id
+        LEFT JOIN wms_location l ON i.location_id = l.id
+        LEFT JOIN wms_item m ON i.item_id = m.id
+    </sql>
+
+    <select id="selectByIdWithDetails" resultType="cn.smart.wms.module.wms.dal.dataobject.inventory.InventoryDO">
+        SELECT
+        <include refid="selectColumns"/>
+        FROM wms_inventory i
+        <include refid="joinTables"/>
+        WHERE i.id = #{id}
+        AND i.deleted = FALSE
+    </select>
+
+    <select id="selectPageWithDetails" resultType="cn.smart.wms.module.wms.dal.dataobject.inventory.InventoryDO">
+        SELECT
+        <include refid="selectColumns"/>
+        FROM wms_inventory i
+        <include refid="joinTables"/>
+        <where>
+            i.deleted = FALSE
+            <if test="reqVO.warehouseId != null">AND i.warehouse_id = #{reqVO.warehouseId}</if>
+            <if test="reqVO.locationId != null">AND i.location_id = #{reqVO.locationId}</if>
+            <if test="reqVO.itemId != null">AND i.item_id = #{reqVO.itemId}</if>
+            <if test="reqVO.itemName != null and reqVO.itemName != ''">AND m.item_name LIKE CONCAT('%', #{reqVO.itemName}, '%')</if>
+            <if test="reqVO.itemCode != null and reqVO.itemCode != ''">AND m.item_code LIKE CONCAT('%', #{reqVO.itemCode}, '%')</if>
+            <if test="reqVO.itemType != null">AND m.item_type = #{reqVO.itemType}</if>
+            <if test="reqVO.stockCount != null">AND i.stock_count = #{reqVO.stockCount}</if>
+            <if test="reqVO.availableCount != null">AND i.available_count = #{reqVO.availableCount}</if>
+            <if test="reqVO.lockedCount != null">AND i.locked_count = #{reqVO.lockedCount}</if>
+            <if test="reqVO.status != null">AND i.status = #{reqVO.status}</if>
+            <if test="reqVO.createTime != null">AND i.create_time BETWEEN #{reqVO.createTime[0]} AND #{reqVO.createTime[1]}</if>
+        </where>
+        ORDER BY i.id DESC
+        LIMIT #{reqVO.pageSize} OFFSET #{offset}
+    </select>
+
+    <select id="selectPageCount" resultType="java.lang.Long">
+        SELECT COUNT(*)
+        FROM wms_inventory i
+        <include refid="joinTables"/>
+        <where>
+            i.deleted = FALSE
+            <if test="reqVO.warehouseId != null">AND i.warehouse_id = #{reqVO.warehouseId}</if>
+            <if test="reqVO.locationId != null">AND i.location_id = #{reqVO.locationId}</if>
+            <if test="reqVO.itemId != null">AND i.item_id = #{reqVO.itemId}</if>
+            <if test="reqVO.itemName != null and reqVO.itemName != ''">AND m.item_name LIKE CONCAT('%', #{reqVO.itemName}, '%')</if>
+            <if test="reqVO.itemCode != null and reqVO.itemCode != ''">AND m.item_code LIKE CONCAT('%', #{reqVO.itemCode}, '%')</if>
+            <if test="reqVO.itemType != null">AND m.item_type = #{reqVO.itemType}</if>
+            <if test="reqVO.stockCount != null">AND i.stock_count = #{reqVO.stockCount}</if>
+            <if test="reqVO.availableCount != null">AND i.available_count = #{reqVO.availableCount}</if>
+            <if test="reqVO.lockedCount != null">AND i.locked_count = #{reqVO.lockedCount}</if>
+            <if test="reqVO.status != null">AND i.status = #{reqVO.status}</if>
+            <if test="reqVO.createTime != null">AND i.create_time BETWEEN #{reqVO.createTime[0]} AND #{reqVO.createTime[1]}</if>
+        </where>
+    </select>
+
+    <select id="selectByWarehouseAndItemAndLocation" resultType="cn.smart.wms.module.wms.dal.dataobject.inventory.InventoryDO">
+        SELECT
+        <include refid="selectColumns"/>
+        FROM wms_inventory i
+        <include refid="joinTables"/>
+        WHERE i.warehouse_id = #{warehouseId}
+        AND i.item_id = #{itemId}
+        AND i.location_id = #{locationId}
+        AND i.deleted = FALSE
+    </select>
+
+    <select id="selectListByItemId" resultType="cn.smart.wms.module.wms.dal.dataobject.inventory.InventoryDO">
+        SELECT
+        <include refid="selectColumns"/>
+        FROM wms_inventory i
+        <include refid="joinTables"/>
+        WHERE i.item_id = #{itemId}
+        AND i.deleted = FALSE
+    </select>
+
+    <select id="selectListByWarehouseId" resultType="cn.smart.wms.module.wms.dal.dataobject.inventory.InventoryDO">
+        SELECT
+        <include refid="selectColumns"/>
+        FROM wms_inventory i
+        <include refid="joinTables"/>
+        WHERE i.warehouse_id = #{warehouseId}
+        AND i.deleted = FALSE
+    </select>
+
+    <select id="selectListByLocationId" resultType="cn.smart.wms.module.wms.dal.dataobject.inventory.InventoryDO">
+        SELECT
+        <include refid="selectColumns"/>
+        FROM wms_inventory i
+        <include refid="joinTables"/>
+        WHERE i.location_id = #{locationId}
+        AND i.deleted = FALSE
+    </select>
+
+    <select id="selectListByConditions" resultType="cn.smart.wms.module.wms.dal.dataobject.inventory.InventoryDO">
+        SELECT
+        <include refid="selectColumns"/>
+        FROM wms_inventory i
+        <include refid="joinTables"/>
+        WHERE i.warehouse_id = #{warehouseId}
+        AND i.deleted = FALSE
+        <if test="locationIds != null and locationIds.size() > 0">
+            AND i.location_id IN
+            <foreach collection="locationIds" item="id" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        </if>
+        <if test="itemIds != null and itemIds.size() > 0">
+            AND i.item_id IN
+            <foreach collection="itemIds" item="id" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        </if>
+        ORDER BY i.id DESC
+    </select>
+
 </mapper>

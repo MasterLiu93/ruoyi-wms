@@ -1,7 +1,6 @@
 package cn.smart.wms.module.wms.controller.admin.inventorymovement.vo;
 
 import lombok.*;
-import java.util.*;
 import io.swagger.v3.oas.annotations.media.Schema;
 import cn.smart.wms.framework.common.pojo.PageParam;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -29,6 +28,12 @@ public class InventoryMovementPageReqVO extends PageParam {
 
     @Schema(description = "物料ID", example = "14832")
     private Long itemId;
+
+    @Schema(description = "物料名称")
+    private String itemName;
+
+    @Schema(description = "物料编码")
+    private String itemCode;
 
     @Schema(description = "移动数量", example = "2819")
     private Integer count;

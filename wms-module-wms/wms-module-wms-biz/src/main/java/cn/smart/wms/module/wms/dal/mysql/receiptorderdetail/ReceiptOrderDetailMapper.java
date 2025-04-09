@@ -1,13 +1,13 @@
 package cn.smart.wms.module.wms.dal.mysql.receiptorderdetail;
 
-import java.util.*;
-
 import cn.smart.wms.framework.common.pojo.PageResult;
-import cn.smart.wms.framework.mybatis.core.query.LambdaQueryWrapperX;
 import cn.smart.wms.framework.mybatis.core.mapper.BaseMapperX;
+import cn.smart.wms.framework.mybatis.core.query.LambdaQueryWrapperX;
+import cn.smart.wms.module.wms.controller.admin.receiptorderdetail.vo.ReceiptOrderDetailPageReqVO;
 import cn.smart.wms.module.wms.dal.dataobject.receiptorderdetail.ReceiptOrderDetailDO;
 import org.apache.ibatis.annotations.Mapper;
-import cn.smart.wms.module.wms.controller.admin.receiptorderdetail.vo.*;
+
+import java.util.List;
 
 /**
  * 入库单明细 Mapper
@@ -31,6 +31,17 @@ public interface ReceiptOrderDetailMapper extends BaseMapperX<ReceiptOrderDetail
                 .eqIfPresent(ReceiptOrderDetailDO::getRemark, reqVO.getRemark())
                 .betweenIfPresent(ReceiptOrderDetailDO::getCreateTime, reqVO.getCreateTime())
                 .orderByDesc(ReceiptOrderDetailDO::getId));
+    }
+
+    default List<ReceiptOrderDetailDO> selectByReceiptOrderId(Long receiptOrderId) {
+        return selectList(new LambdaQueryWrapperX<ReceiptOrderDetailDO>()
+                .eq(ReceiptOrderDetailDO::getReceiptOrderId, receiptOrderId)
+                .orderByAsc(ReceiptOrderDetailDO::getId));
+    }
+    
+    default int deleteByReceiptOrderId(Long receiptOrderId) {
+        return delete(new LambdaQueryWrapperX<ReceiptOrderDetailDO>()
+                .eq(ReceiptOrderDetailDO::getReceiptOrderId, receiptOrderId));
     }
 
 }

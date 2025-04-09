@@ -3,10 +3,53 @@
 <mapper namespace="cn.smart.wms.module.wms.dal.mysql.location.LocationMapper">
 
     <!--
-        一般情况下，尽可能使用 Mapper 进行 CRUD 增删改查即可。
+        一般情况下，尽可能使用 Mapper 文件进行 CRUD 增删改查即可。
         无法满足的场景，例如说多表关联查询，才使用 XML 编写 SQL。
         代码生成器暂时只生成 Mapper XML 文件本身，更多推荐 MybatisX 快速开发插件来生成查询。
         文档可见：https://www.iocoder.cn/MyBatis/x-plugins/
      -->
+
+    <sql id="selectFields">
+        l.id, l.warehouse_id, l.area_id, l.location_code, l.location_name, 
+        l.rack_id, l.location_type, l.status, l.remark, 
+        l.creator, l.create_time, l.updater, l.update_time, l.deleted
+    </sql>
+
+    <select id="selectPage" resultType="cn.smart.wms.module.wms.dal.dataobject.location.LocationDO">
+        SELECT
+        <include refid="selectFields"/>
+        FROM wms_location l
+        LEFT JOIN wms_rack r ON l.rack_id = r.id
+        LEFT JOIN wms_area a ON l.area_id = a.id
+        LEFT JOIN wms_warehouse w ON l.warehouse_id = w.id
+        <where>
+            l.deleted = FALSE
+            <if test="reqVO.warehouseId != null">
+                AND l.warehouse_id = #{reqVO.warehouseId}
+            </if>
+            <if test="reqVO.areaId != null">
+                AND l.area_id = #{reqVO.areaId}
+            </if>
+            <if test="reqVO.rackId != null">
+                AND l.rack_id = #{reqVO.rackId}
+            </if>
+            <if test="reqVO.locationCode != null and reqVO.locationCode != ''">
+                AND l.location_code = #{reqVO.locationCode}
+            </if>
+            <if test="reqVO.locationName != null and reqVO.locationName != ''">
+                AND l.location_name LIKE CONCAT('%', #{reqVO.locationName}, '%')
+            </if>
+            <if test="reqVO.locationType != null">
+                AND l.location_type = #{reqVO.locationType}
+            </if>
+            <if test="reqVO.status != null">
+                AND l.status = #{reqVO.status}
+            </if>
+            <if test="reqVO.createTime != null">
+                AND l.create_time BETWEEN #{reqVO.createTime[0]} AND #{reqVO.createTime[1]}
+            </if>
+        </where>
+        ORDER BY l.id DESC
+    </select>
 
 </mapper>

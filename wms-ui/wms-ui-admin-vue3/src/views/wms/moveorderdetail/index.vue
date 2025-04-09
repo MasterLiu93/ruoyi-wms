@@ -26,62 +26,20 @@
           class="!w-240px"
         />
       </el-form-item>
-      <el-form-item label="批次ID" prop="batchId">
-        <el-input
-          v-model="queryParams.batchId"
-          placeholder="请输入批次ID"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="计划数量" prop="planCount">
-        <el-input
-          v-model="queryParams.planCount"
-          placeholder="请输入计划数量"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="实际移库数量" prop="realCount">
-        <el-input
-          v-model="queryParams.realCount"
-          placeholder="请输入实际移库数量"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="状态(0-未移库 1-部分移库 2-已移库)" prop="status">
+      <el-form-item label="状态" prop="status">
         <el-select
           v-model="queryParams.status"
-          placeholder="请选择状态(0-未移库 1-部分移库 2-已移库)"
+          placeholder="请选择状态"
           clearable
           class="!w-240px"
         >
-          <el-option label="请选择字典生成" value="" />
+          <el-option
+            v-for="dict in getIntDictOptions(DICT_TYPE.WMS_MOVE_ORDER_DETAIL_STATUS)"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
         </el-select>
-      </el-form-item>
-      <el-form-item label="备注" prop="remark">
-        <el-input
-          v-model="queryParams.remark"
-          placeholder="请输入备注"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="创建时间" prop="createTime">
-        <el-date-picker
-          v-model="queryParams.createTime"
-          value-format="YYYY-MM-DD HH:mm:ss"
-          type="daterange"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          :default-time="[new Date('1 00:00:00'), new Date('1 23:59:59')]"
-          class="!w-220px"
-        />
       </el-form-item>
       <el-form-item>
         <el-button @click="handleQuery"><Icon icon="ep:search" class="mr-5px" /> 搜索</el-button>
@@ -164,6 +122,7 @@ import { dateFormatter } from '@/utils/formatTime'
 import download from '@/utils/download'
 import { MoveOrderDetailApi, MoveOrderDetailVO } from '@/api/wms/moveorderdetail'
 import MoveOrderDetailForm from './MoveOrderDetailForm.vue'
+import { DICT_TYPE, getIntDictOptions } from '@/utils/dict'
 
 /** 移库单明细 列表 */
 defineOptions({ name: 'MoveOrderDetail' })

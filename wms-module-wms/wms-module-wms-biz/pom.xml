@@ -60,6 +60,12 @@
             <groupId>cn.smart.wms</groupId>
             <artifactId>wms-spring-boot-starter-biz-tenant</artifactId>
         </dependency>
+        <dependency>
+            <groupId>cn.smart.wms</groupId>
+            <artifactId>wms-spring-boot-starter-idgenerator</artifactId>
+            <version>2.4.1-jdk8-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
 
 
     </dependencies>

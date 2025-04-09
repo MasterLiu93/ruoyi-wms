@@ -46,4 +46,4 @@ export const ItemApi = {
   exportItem: async (params) => {
     return await request.download({ url: `/wms/item/export-excel`, params })
   },
-}
+}

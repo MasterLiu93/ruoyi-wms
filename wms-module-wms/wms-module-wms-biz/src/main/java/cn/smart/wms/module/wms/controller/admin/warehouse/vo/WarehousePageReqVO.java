@@ -1,7 +1,6 @@
 package cn.smart.wms.module.wms.controller.admin.warehouse.vo;
 
 import lombok.*;
-import java.util.*;
 import io.swagger.v3.oas.annotations.media.Schema;
 import cn.smart.wms.framework.common.pojo.PageParam;
 import java.math.BigDecimal;

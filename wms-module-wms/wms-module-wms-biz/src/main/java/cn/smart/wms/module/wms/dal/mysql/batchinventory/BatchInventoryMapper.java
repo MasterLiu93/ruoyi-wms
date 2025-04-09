@@ -31,5 +31,61 @@ public interface BatchInventoryMapper extends BaseMapperX<BatchInventoryDO> {
                 .betweenIfPresent(BatchInventoryDO::getCreateTime, reqVO.getCreateTime())
                 .orderByDesc(BatchInventoryDO::getId));
     }
-
+    
+    /**
+     * 根据批次ID、物料ID、仓库ID和库位ID查询批次库存
+     *
+     * @param batchId 批次ID
+     * @param itemId 物料ID
+     * @param warehouseId 仓库ID
+     * @param locationId 库位ID
+     * @return 批次库存对象
+     */
+    default BatchInventoryDO selectByInfo(Long batchId, Long itemId, Long warehouseId, Long locationId) {
+        return selectOne(new LambdaQueryWrapperX<BatchInventoryDO>()
+                .eq(BatchInventoryDO::getBatchId, batchId)
+                .eq(BatchInventoryDO::getItemId, itemId)
+                .eq(BatchInventoryDO::getWarehouseId, warehouseId)
+                .eq(BatchInventoryDO::getLocationId, locationId));
+    }
+    
+    /**
+     * 根据批次ID查询所有批次库存
+     *
+     * @param batchId 批次ID
+     * @return 批次库存列表
+     */
+    default List<BatchInventoryDO> selectListByBatchId(Long batchId) {
+        return selectList(BatchInventoryDO::getBatchId, batchId);
+    }
+    
+    /**
+     * 根据物料ID查询所有批次库存
+     *
+     * @param itemId 物料ID
+     * @return 批次库存列表
+     */
+    default List<BatchInventoryDO> selectListByItemId(Long itemId) {
+        return selectList(BatchInventoryDO::getItemId, itemId);
+    }
+    
+    /**
+     * 根据仓库ID查询所有批次库存
+     *
+     * @param warehouseId 仓库ID
+     * @return 批次库存列表
+     */
+    default List<BatchInventoryDO> selectListByWarehouseId(Long warehouseId) {
+        return selectList(BatchInventoryDO::getWarehouseId, warehouseId);
+    }
+    
+    /**
+     * 根据库位ID查询所有批次库存
+     *
+     * @param locationId 库位ID
+     * @return 批次库存列表
+     */
+    default List<BatchInventoryDO> selectListByLocationId(Long locationId) {
+        return selectList(BatchInventoryDO::getLocationId, locationId);
+    }
 }

@@ -3,7 +3,7 @@ package cn.smart.wms.module.wms.controller.admin.batch.vo;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.util.*;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import cn.smart.wms.framework.common.pojo.PageParam;
 import org.springframework.format.annotation.DateTimeFormat;

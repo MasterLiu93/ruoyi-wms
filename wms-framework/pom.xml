@@ -27,6 +27,7 @@
         <module>wms-spring-boot-starter-biz-tenant</module>
         <module>wms-spring-boot-starter-biz-data-permission</module>
         <module>wms-spring-boot-starter-biz-ip</module>
+        <module>wms-spring-boot-starter-idgenerator</module>
     </modules>
 
     <artifactId>wms-framework</artifactId>

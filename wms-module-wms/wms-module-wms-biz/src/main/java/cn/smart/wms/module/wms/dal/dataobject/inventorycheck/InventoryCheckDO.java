@@ -1,9 +1,6 @@
 package cn.smart.wms.module.wms.dal.dataobject.inventorycheck;
 
 import lombok.*;
-import java.util.*;
-import java.time.LocalDateTime;
-import java.time.LocalDateTime;
 import com.baomidou.mybatisplus.annotation.*;
 import cn.smart.wms.framework.mybatis.core.dataobject.BaseDO;
 
@@ -35,6 +32,11 @@ public class InventoryCheckDO extends BaseDO {
      * 仓库ID
      */
     private Long warehouseId;
+    /**
+     * 仓库名称
+     */
+    @TableField(exist = false)
+    private String warehouseName;
     /**
      * 盘点类型(0-全部盘点 1-部分盘点)
      */

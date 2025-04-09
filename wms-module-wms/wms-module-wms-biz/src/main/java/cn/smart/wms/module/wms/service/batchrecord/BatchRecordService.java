@@ -1,11 +1,11 @@
 package cn.smart.wms.module.wms.service.batchrecord;
 
-import java.util.*;
-import javax.validation.*;
-import cn.smart.wms.module.wms.controller.admin.batchrecord.vo.*;
-import cn.smart.wms.module.wms.dal.dataobject.batchrecord.BatchRecordDO;
 import cn.smart.wms.framework.common.pojo.PageResult;
-import cn.smart.wms.framework.common.pojo.PageParam;
+import cn.smart.wms.module.wms.controller.admin.batchrecord.vo.BatchRecordPageReqVO;
+import cn.smart.wms.module.wms.controller.admin.batchrecord.vo.BatchRecordSaveReqVO;
+import cn.smart.wms.module.wms.dal.dataobject.batchrecord.BatchRecordDO;
+
+import javax.validation.Valid;
 
 /**
  * 批次操作记录 Service 接口

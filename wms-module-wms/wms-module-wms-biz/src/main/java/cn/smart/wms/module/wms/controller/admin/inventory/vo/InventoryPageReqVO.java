@@ -1,10 +1,12 @@
 package cn.smart.wms.module.wms.controller.admin.inventory.vo;
 
-import lombok.*;
-import java.util.*;
-import io.swagger.v3.oas.annotations.media.Schema;
 import cn.smart.wms.framework.common.pojo.PageParam;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.springframework.format.annotation.DateTimeFormat;
+
 import java.time.LocalDateTime;
 
 import static cn.smart.wms.framework.common.util.date.DateUtils.FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND;
@@ -23,6 +25,15 @@ public class InventoryPageReqVO extends PageParam {
 
     @Schema(description = "物料ID", example = "15331")
     private Long itemId;
+
+    @Schema(description = "物料名称", example = "笔记本电脑")
+    private String itemName;
+
+    @Schema(description = "物料编码", example = "IT-001")
+    private String itemCode;
+
+    @Schema(description = "物料类型")
+    private Integer itemType;
 
     @Schema(description = "库存数量", example = "24401")
     private Integer stockCount;

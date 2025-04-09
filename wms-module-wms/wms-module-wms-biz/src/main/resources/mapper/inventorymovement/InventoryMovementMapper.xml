@@ -9,4 +9,87 @@
         文档可见：https://www.iocoder.cn/MyBatis/x-plugins/
      -->
 
+    <sql id="selectColumns">
+        m.id,
+        m.movement_type,
+        m.movement_no,
+        m.warehouse_id,
+        m.location_id,
+        m.item_id,
+        m.count,
+        m.before_count,
+        m.after_count,
+        m.business_type,
+        m.business_id,
+        m.business_detail_id,
+        m.remark,
+        m.creator,
+        m.create_time,
+        m.updater,
+        m.update_time,
+        m.deleted,
+        w.warehouse_name AS warehouseName,
+        l.location_name AS locationName,
+        i.item_name AS itemName,
+        i.item_code AS itemCode,
+        i.spec AS spec,
+        i.unit AS unit
+    </sql>
+
+    <sql id="joinTables">
+        LEFT JOIN wms_warehouse w ON m.warehouse_id = w.id
+        LEFT JOIN wms_location l ON m.location_id = l.id
+        LEFT JOIN wms_item i ON m.item_id = i.id
+    </sql>
+
+    <select id="selectByIdWithDetails" resultType="cn.smart.wms.module.wms.dal.dataobject.inventorymovement.InventoryMovementDO">
+        SELECT
+        <include refid="selectColumns"/>
+        FROM wms_inventory_movement m
+        <include refid="joinTables"/>
+        WHERE m.id = #{id}
+        AND m.deleted = FALSE
+    </select>
+
+    <select id="selectPageWithDetails" resultType="cn.smart.wms.module.wms.dal.dataobject.inventorymovement.InventoryMovementDO">
+        SELECT
+        <include refid="selectColumns"/>
+        FROM wms_inventory_movement m
+        <include refid="joinTables"/>
+        <where>
+            m.deleted = FALSE
+            <if test="reqVO.warehouseId != null">AND m.warehouse_id = #{reqVO.warehouseId}</if>
+            <if test="reqVO.locationId != null">AND m.location_id = #{reqVO.locationId}</if>
+            <if test="reqVO.itemId != null">AND m.item_id = #{reqVO.itemId}</if>
+            <if test="reqVO.itemName != null and reqVO.itemName != ''">AND i.item_name LIKE CONCAT('%', #{reqVO.itemName}, '%')</if>
+            <if test="reqVO.itemCode != null and reqVO.itemCode != ''">AND i.item_code LIKE CONCAT('%', #{reqVO.itemCode}, '%')</if>
+            <if test="reqVO.movementType != null">AND m.movement_type = #{reqVO.movementType}</if>
+            <if test="reqVO.movementNo != null and reqVO.movementNo != ''">AND m.movement_no LIKE CONCAT('%', #{reqVO.movementNo}, '%')</if>
+            <if test="reqVO.businessType != null and reqVO.businessType != ''">AND m.business_type = #{reqVO.businessType}</if>
+            <if test="reqVO.businessId != null">AND m.business_id = #{reqVO.businessId}</if>
+            <if test="reqVO.createTime != null">AND m.create_time BETWEEN #{reqVO.createTime[0]} AND #{reqVO.createTime[1]}</if>
+        </where>
+        ORDER BY m.id DESC
+        LIMIT #{reqVO.pageSize} OFFSET #{offset}
+    </select>
+
+    <select id="selectPageCount" resultType="java.lang.Long">
+        SELECT COUNT(*)
+        FROM wms_inventory_movement m
+        <include refid="joinTables"/>
+        <where>
+            m.deleted = FALSE
+            <if test="reqVO.warehouseId != null">AND m.warehouse_id = #{reqVO.warehouseId}</if>
+            <if test="reqVO.locationId != null">AND m.location_id = #{reqVO.locationId}</if>
+            <if test="reqVO.itemId != null">AND m.item_id = #{reqVO.itemId}</if>
+            <if test="reqVO.itemName != null and reqVO.itemName != ''">AND i.item_name LIKE CONCAT('%', #{reqVO.itemName}, '%')</if>
+            <if test="reqVO.itemCode != null and reqVO.itemCode != ''">AND i.item_code LIKE CONCAT('%', #{reqVO.itemCode}, '%')</if>
+            <if test="reqVO.movementType != null">AND m.movement_type = #{reqVO.movementType}</if>
+            <if test="reqVO.movementNo != null and reqVO.movementNo != ''">AND m.movement_no LIKE CONCAT('%', #{reqVO.movementNo}, '%')</if>
+            <if test="reqVO.businessType != null and reqVO.businessType != ''">AND m.business_type = #{reqVO.businessType}</if>
+            <if test="reqVO.businessId != null">AND m.business_id = #{reqVO.businessId}</if>
+            <if test="reqVO.createTime != null">AND m.create_time BETWEEN #{reqVO.createTime[0]} AND #{reqVO.createTime[1]}</if>
+        </where>
+    </select>
+
 </mapper>

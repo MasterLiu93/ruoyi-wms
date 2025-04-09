@@ -48,4 +48,4 @@ export const InventoryMovementApi = {
   exportInventoryMovement: async (params) => {
     return await request.download({ url: `/wms/inventory-movement/export-excel`, params })
   },
-}
+}

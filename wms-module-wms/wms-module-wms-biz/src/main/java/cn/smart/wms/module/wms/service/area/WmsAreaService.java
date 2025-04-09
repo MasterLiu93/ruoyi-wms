@@ -1,9 +1,13 @@
 package cn.smart.wms.module.wms.service.area;
 
-import javax.validation.*;
-import cn.smart.wms.module.wms.controller.admin.area.vo.*;
-import cn.smart.wms.module.wms.dal.dataobject.area.AreaDO;
 import cn.smart.wms.framework.common.pojo.PageResult;
+import cn.smart.wms.module.wms.controller.admin.area.vo.AreaPageReqVO;
+import cn.smart.wms.module.wms.controller.admin.area.vo.AreaSaveReqVO;
+import cn.smart.wms.module.wms.dal.dataobject.area.AreaDO;
+
+import javax.validation.Valid;
+import java.util.List;
+import java.util.Set;
 
 /**
  * 货区 Service 接口
@@ -49,5 +53,21 @@ public interface WmsAreaService {
      * @return 货区分页
      */
     PageResult<AreaDO> getAreaPage(AreaPageReqVO pageReqVO);
+    
+    /**
+     * 获取货区列表
+     *
+     * @param ids 货区ID集合
+     * @return 货区列表
+     */
+    List<AreaDO> getAreaList(Set<Long> ids);
+    
+    /**
+     * 获取货区列表
+     *
+     * @param warehouseId 仓库ID
+     * @return 货区列表
+     */
+    List<AreaDO> getAreaListByWarehouseId(Long warehouseId);
 
 }

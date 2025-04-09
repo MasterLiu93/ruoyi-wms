@@ -2,8 +2,7 @@ package cn.smart.wms.module.wms.controller.admin.inventory.vo;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
-import java.util.*;
-import org.springframework.format.annotation.DateTimeFormat;
+
 import java.time.LocalDateTime;
 import com.alibaba.excel.annotation.*;
 
@@ -20,13 +19,41 @@ public class InventoryRespVO {
     @ExcelProperty("仓库ID")
     private Long warehouseId;
 
+    @Schema(description = "仓库名称", requiredMode = Schema.RequiredMode.REQUIRED)
+    @ExcelProperty("仓库名称")
+    private String warehouseName;
+
     @Schema(description = "库位ID", requiredMode = Schema.RequiredMode.REQUIRED, example = "15018")
     @ExcelProperty("库位ID")
     private Long locationId;
 
+    @Schema(description = "库位名称", requiredMode = Schema.RequiredMode.REQUIRED)
+    @ExcelProperty("库位名称")
+    private String locationName;
+
     @Schema(description = "物料ID", requiredMode = Schema.RequiredMode.REQUIRED, example = "15331")
     @ExcelProperty("物料ID")
     private Long itemId;
+
+    @Schema(description = "物料名称", requiredMode = Schema.RequiredMode.REQUIRED)
+    @ExcelProperty("物料名称")
+    private String itemName;
+
+    @Schema(description = "物料编码", requiredMode = Schema.RequiredMode.REQUIRED)
+    @ExcelProperty("物料编码")
+    private String itemCode;
+
+    @Schema(description = "物料类型", requiredMode = Schema.RequiredMode.REQUIRED)
+    @ExcelProperty("物料类型")
+    private Integer itemType;
+
+    @Schema(description = "规格型号")
+    @ExcelProperty("规格型号")
+    private String spec;
+
+    @Schema(description = "单位")
+    @ExcelProperty("单位")
+    private String unit;
 
     @Schema(description = "库存数量", requiredMode = Schema.RequiredMode.REQUIRED, example = "24401")
     @ExcelProperty("库存数量")

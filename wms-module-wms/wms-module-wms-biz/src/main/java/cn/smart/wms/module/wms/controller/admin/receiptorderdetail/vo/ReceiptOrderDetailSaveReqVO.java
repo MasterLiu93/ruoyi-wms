@@ -2,7 +2,7 @@ package cn.smart.wms.module.wms.controller.admin.receiptorderdetail.vo;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
-import java.util.*;
+
 import javax.validation.constraints.*;
 import java.math.BigDecimal;
 
@@ -31,6 +31,12 @@ public class ReceiptOrderDetailSaveReqVO {
 
     @Schema(description = "入库库位ID", example = "12862")
     private Long locationId;
+
+    @Schema(description = "货区ID", example = "1001")
+    private Long areaId;
+
+    @Schema(description = "货架ID", example = "2001")
+    private Long rackId;
 
     @Schema(description = "批次ID", example = "25")
     private Long batchId;

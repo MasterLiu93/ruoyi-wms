@@ -7,8 +7,8 @@
       label-width="100px"
       v-loading="formLoading"
     >
-      <el-form-item label="客户编码" prop="customerCode">
-        <el-input v-model="formData.customerCode" placeholder="请输入客户编码" />
+      <el-form-item label="客户编码" prop="customerCode" v-if="formType === 'update'">
+        <el-input v-model="formData.customerCode" placeholder="请输入客户编码" disabled />
       </el-form-item>
       <el-form-item label="客户名称" prop="customerName">
         <el-input v-model="formData.customerName" placeholder="请输入客户名称" />
@@ -89,7 +89,6 @@ const formData = ref({
   remark: undefined,
 })
 const formRules = reactive({
-  customerCode: [{ required: true, message: '客户编码不能为空', trigger: 'blur' }],
   customerName: [{ required: true, message: '客户名称不能为空', trigger: 'blur' }],
   customerLevel: [{ required: true, message: '客户级别(0-普通客户 1-重要客户 2-VIP客户)不能为空', trigger: 'blur' }],
   contact: [{ required: true, message: '联系人不能为空', trigger: 'blur' }],

@@ -1,11 +1,11 @@
 package cn.smart.wms.module.wms.service.inventorymovement;
 
-import java.util.*;
-import javax.validation.*;
-import cn.smart.wms.module.wms.controller.admin.inventorymovement.vo.*;
-import cn.smart.wms.module.wms.dal.dataobject.inventorymovement.InventoryMovementDO;
 import cn.smart.wms.framework.common.pojo.PageResult;
-import cn.smart.wms.framework.common.pojo.PageParam;
+import cn.smart.wms.module.wms.controller.admin.inventorymovement.vo.InventoryMovementPageReqVO;
+import cn.smart.wms.module.wms.controller.admin.inventorymovement.vo.InventoryMovementSaveReqVO;
+import cn.smart.wms.module.wms.dal.dataobject.inventorymovement.InventoryMovementDO;
+
+import javax.validation.Valid;
 
 /**
  * 库存移动记录 Service 接口

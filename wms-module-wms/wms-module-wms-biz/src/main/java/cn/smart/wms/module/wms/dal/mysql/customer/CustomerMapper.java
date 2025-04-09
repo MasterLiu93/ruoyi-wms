@@ -1,7 +1,5 @@
 package cn.smart.wms.module.wms.dal.mysql.customer;
 
-import java.util.*;
-
 import cn.smart.wms.framework.common.pojo.PageResult;
 import cn.smart.wms.framework.mybatis.core.query.LambdaQueryWrapperX;
 import cn.smart.wms.framework.mybatis.core.mapper.BaseMapperX;
@@ -33,5 +31,14 @@ public interface CustomerMapper extends BaseMapperX<CustomerDO> {
                 .betweenIfPresent(CustomerDO::getCreateTime, reqVO.getCreateTime())
                 .orderByDesc(CustomerDO::getId));
     }
-
+    
+    /**
+     * 根据客户编码查询客户
+     *
+     * @param customerCode 客户编码
+     * @return 客户
+     */
+    default CustomerDO selectByCustomerCode(String customerCode) {
+        return selectOne(CustomerDO::getCustomerCode, customerCode);
+    }
 }

@@ -1,9 +1,10 @@
 package cn.smart.wms.module.wms.controller.admin.customer.vo;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
-import java.util.*;
-import javax.validation.constraints.*;
+import lombok.Data;
+
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 @Schema(description = "管理后台 - 客户新增/修改 Request VO")
 @Data
@@ -12,8 +13,7 @@ public class CustomerSaveReqVO {
     @Schema(description = "客户ID", requiredMode = Schema.RequiredMode.REQUIRED, example = "29593")
     private Long id;
 
-    @Schema(description = "客户编码", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotEmpty(message = "客户编码不能为空")
+    @Schema(description = "客户编码")
     private String customerCode;
 
     @Schema(description = "客户名称", requiredMode = Schema.RequiredMode.REQUIRED, example = "赵六")

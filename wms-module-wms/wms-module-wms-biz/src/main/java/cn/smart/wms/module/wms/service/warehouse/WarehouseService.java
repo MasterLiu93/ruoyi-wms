@@ -5,7 +5,6 @@ import javax.validation.*;
 import cn.smart.wms.module.wms.controller.admin.warehouse.vo.*;
 import cn.smart.wms.module.wms.dal.dataobject.warehouse.WarehouseDO;
 import cn.smart.wms.framework.common.pojo.PageResult;
-import cn.smart.wms.framework.common.pojo.PageParam;
 
 /**
  * 仓库 Service 接口
@@ -51,5 +50,20 @@ public interface WarehouseService {
      * @return 仓库分页
      */
     PageResult<WarehouseDO> getWarehousePage(WarehousePageReqVO pageReqVO);
+
+    /**
+     * 获取仓库列表
+     *
+     * @return 仓库列表
+     */
+    List<WarehouseDO> getWarehouseList();
+    
+    /**
+     * 获取仓库Map，key为仓库ID，value为仓库对象
+     *
+     * @param ids 仓库编号集合
+     * @return 仓库Map
+     */
+    Map<Long, WarehouseDO> getWarehouseMap(Set<Long> ids);
 
 }

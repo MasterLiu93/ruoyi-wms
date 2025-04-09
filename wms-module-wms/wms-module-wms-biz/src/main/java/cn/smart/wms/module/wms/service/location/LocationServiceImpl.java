@@ -3,14 +3,13 @@ package cn.smart.wms.module.wms.service.location;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import cn.smart.wms.module.wms.controller.admin.location.vo.*;
 import cn.smart.wms.module.wms.dal.dataobject.location.LocationDO;
 import cn.smart.wms.framework.common.pojo.PageResult;
-import cn.smart.wms.framework.common.pojo.PageParam;
 import cn.smart.wms.framework.common.util.object.BeanUtils;
+import cn.smart.wms.framework.mybatis.core.query.LambdaQueryWrapperX;
 
 import cn.smart.wms.module.wms.dal.mysql.location.LocationMapper;
 
@@ -69,6 +68,23 @@ public class LocationServiceImpl implements LocationService {
     @Override
     public PageResult<LocationDO> getLocationPage(LocationPageReqVO pageReqVO) {
         return locationMapper.selectPage(pageReqVO);
+    }
+
+    @Override
+    public List<LocationDO> getLocationList(Long rackId) {
+        if (rackId != null) {
+            return locationMapper.selectList(new LambdaQueryWrapperX<LocationDO>()
+                    .eq(LocationDO::getRackId, rackId));
+        }
+        return locationMapper.selectList();
+    }
+
+    @Override
+    public List<LocationDO> getLocationListByIds(Set<Long> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return locationMapper.selectBatchIds(ids);
     }
 
 }

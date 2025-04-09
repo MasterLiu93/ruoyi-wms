@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+cn.smart.wms.framework.idgenerator.autoconfigure.IdGeneratorAutoConfiguration 

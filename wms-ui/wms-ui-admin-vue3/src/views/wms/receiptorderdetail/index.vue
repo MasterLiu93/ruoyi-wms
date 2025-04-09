@@ -26,6 +26,24 @@
           class="!w-240px"
         />
       </el-form-item>
+      <el-form-item label="货区ID" prop="areaId">
+        <el-input
+          v-model="queryParams.areaId"
+          placeholder="请输入货区ID"
+          clearable
+          @keyup.enter="handleQuery"
+          class="!w-240px"
+        />
+      </el-form-item>
+      <el-form-item label="货架ID" prop="rackId">
+        <el-input
+          v-model="queryParams.rackId"
+          placeholder="请输入货架ID"
+          clearable
+          @keyup.enter="handleQuery"
+          class="!w-240px"
+        />
+      </el-form-item>
       <el-form-item label="计划数量" prop="planCount">
         <el-input
           v-model="queryParams.planCount"
@@ -140,14 +158,27 @@
     <el-table v-loading="loading" :data="list" :stripe="true" :show-overflow-tooltip="true">
       <el-table-column label="入库单明细ID" align="center" prop="id" />
       <el-table-column label="入库单ID" align="center" prop="receiptOrderId" />
-      <el-table-column label="物料ID" align="center" prop="itemId" />
+      <el-table-column label="物料编码" align="center" prop="itemCode" />
+      <el-table-column label="物料名称" align="center" prop="itemName" />
+      <el-table-column label="规格" align="center" prop="spec" />
+      <el-table-column label="单位" align="center" prop="unit" />
       <el-table-column label="计划数量" align="center" prop="planCount" />
       <el-table-column label="实际入库数量" align="center" prop="realCount" />
-      <el-table-column label="入库库位ID" align="center" prop="locationId" />
+      <el-table-column label="货区" align="center" prop="areaName" />
+      <el-table-column label="货架" align="center" prop="rackName" />
+      <el-table-column label="库位" align="center" prop="locationName" />
       <el-table-column label="批次ID" align="center" prop="batchId" />
       <el-table-column label="入库单价" align="center" prop="price" />
-      <el-table-column label="质检状态(0-未检验 1-已检验)" align="center" prop="qualityStatus" />
-      <el-table-column label="状态(0-未入库 1-部分入库 2-已入库)" align="center" prop="status" />
+      <el-table-column label="质检状态" align="center" prop="qualityStatus">
+        <template #default="scope">
+          <dict-tag :type="DICT_TYPE.COMMON_STATUS" :value="scope.row.qualityStatus" />
+        </template>
+      </el-table-column>
+      <el-table-column label="状态" align="center" prop="status">
+        <template #default="scope">
+          <dict-tag :type="DICT_TYPE.WMS_RECEIPT_STATUS" :value="scope.row.status" />
+        </template>
+      </el-table-column>
       <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column
         label="创建时间"
@@ -210,6 +241,8 @@ const queryParams = reactive({
   pageSize: 10,
   receiptOrderId: undefined,
   itemId: undefined,
+  areaId: undefined,
+  rackId: undefined,
   planCount: undefined,
   realCount: undefined,
   locationId: undefined,

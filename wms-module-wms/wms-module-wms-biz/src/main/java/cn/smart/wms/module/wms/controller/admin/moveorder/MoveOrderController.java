@@ -8,7 +8,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Operation;
 
-import javax.validation.constraints.*;
 import javax.validation.*;
 import javax.servlet.http.*;
 import java.util.*;
@@ -90,6 +89,57 @@ public class MoveOrderController {
         // 导出 Excel
         ExcelUtils.write(response, "移库单.xls", "数据", MoveOrderRespVO.class,
                         BeanUtils.toBean(list, MoveOrderRespVO.class));
+    }
+    
+    @GetMapping("/list")
+    @Operation(summary = "获得移库单列表")
+    @PreAuthorize("@ss.hasPermission('wms:move-order:query')")
+    public CommonResult<List<MoveOrderRespVO>> getMoveOrderList(@Valid MoveOrderPageReqVO pageReqVO) {
+        List<MoveOrderDO> list = moveOrderService.getMoveOrderList(pageReqVO);
+        return success(BeanUtils.toBean(list, MoveOrderRespVO.class));
+    }
+    
+    @PutMapping("/approve")
+    @Operation(summary = "审核移库单")
+    @PreAuthorize("@ss.hasPermission('wms:move-order:update')")
+    public CommonResult<Boolean> approveMoveOrder(@RequestParam("id") Long id,
+                                                @RequestParam("approved") Boolean approved,
+                                                @RequestParam(value = "remark", required = false) String remark) {
+        moveOrderService.approveMoveOrder(id, approved, remark);
+        return success(true);
+    }
+    
+    @PostMapping("/execute-detail")
+    @Operation(summary = "执行移库操作 - 针对单个明细")
+    @PreAuthorize("@ss.hasPermission('wms:move-order:update')")
+    public CommonResult<Long> executeMoveByDetail(@Valid @RequestBody MoveOperationReqVO reqVO) {
+        return success(moveOrderService.executeMoveByDetail(
+            reqVO.getDetailId(), reqVO.getCount(), reqVO.getRemark()));
+    }
+    
+    @PostMapping("/execute")
+    @Operation(summary = "执行移库操作 - 针对整个移库单")
+    @PreAuthorize("@ss.hasPermission('wms:move-order:update')")
+    public CommonResult<List<Long>> executeMove(@RequestParam("id") Long id,
+                                             @Valid @RequestBody List<MoveOperationReqVO> moveDetails) {
+        return success(moveOrderService.executeMove(id, moveDetails));
+    }
+    
+    @PutMapping("/cancel")
+    @Operation(summary = "取消移库单")
+    @PreAuthorize("@ss.hasPermission('wms:move-order:update')")
+    public CommonResult<Boolean> cancelMoveOrder(@RequestParam("id") Long id,
+                                               @RequestParam(value = "remark", required = false) String remark) {
+        moveOrderService.cancelMoveOrder(id, remark);
+        return success(true);
+    }
+    
+    @PutMapping("/complete")
+    @Operation(summary = "完成移库单")
+    @PreAuthorize("@ss.hasPermission('wms:move-order:update')")
+    public CommonResult<Boolean> completeMoveOrder(@RequestParam("id") Long id) {
+        moveOrderService.completeMoveOrder(id);
+        return success(true);
     }
 
 }

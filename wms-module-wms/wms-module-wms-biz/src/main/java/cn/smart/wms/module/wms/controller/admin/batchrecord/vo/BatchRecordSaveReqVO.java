@@ -2,7 +2,7 @@ package cn.smart.wms.module.wms.controller.admin.batchrecord.vo;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
-import java.util.*;
+
 import javax.validation.constraints.*;
 
 @Schema(description = "管理后台 - 批次操作记录新增/修改 Request VO")

@@ -1,5 +1,6 @@
 package cn.smart.wms.module.wms.controller.admin.warehouse;
 
+import cn.smart.wms.framework.idgenerator.core.IdGeneratorFactory;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import org.springframework.validation.annotation.Validated;
@@ -8,7 +9,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Operation;
 
-import javax.validation.constraints.*;
 import javax.validation.*;
 import javax.servlet.http.*;
 import java.util.*;
@@ -37,11 +37,18 @@ public class WarehouseController {
 
     @Resource
     private WarehouseService warehouseService;
+    
+    @Resource
+    private IdGeneratorFactory idGeneratorFactory;
 
     @PostMapping("/create")
     @Operation(summary = "创建仓库")
     @PreAuthorize("@ss.hasPermission('wms:warehouse:create')")
     public CommonResult<Long> createWarehouse(@Valid @RequestBody WarehouseSaveReqVO createReqVO) {
+        // 自动生成仓库编码，不再依赖前端传入
+        if (createReqVO.getWarehouseCode() == null || createReqVO.getWarehouseCode().isEmpty()) {
+            createReqVO.setWarehouseCode(idGeneratorFactory.generateCustomCode("CK", 1));
+        }
         return success(warehouseService.createWarehouse(createReqVO));
     }
 
@@ -74,8 +81,8 @@ public class WarehouseController {
     @GetMapping("/page")
     @Operation(summary = "获得仓库分页")
     @PreAuthorize("@ss.hasPermission('wms:warehouse:query')")
-    public CommonResult<PageResult<WarehouseRespVO>> getWarehousePage(@Valid WarehousePageReqVO pageReqVO) {
-        PageResult<WarehouseDO> pageResult = warehouseService.getWarehousePage(pageReqVO);
+    public CommonResult<PageResult<WarehouseRespVO>> getWarehousePage(@Valid WarehousePageReqVO pageVO) {
+        PageResult<WarehouseDO> pageResult = warehouseService.getWarehousePage(pageVO);
         return success(BeanUtils.toBean(pageResult, WarehouseRespVO.class));
     }
 
@@ -83,13 +90,21 @@ public class WarehouseController {
     @Operation(summary = "导出仓库 Excel")
     @PreAuthorize("@ss.hasPermission('wms:warehouse:export')")
     @ApiAccessLog(operateType = EXPORT)
-    public void exportWarehouseExcel(@Valid WarehousePageReqVO pageReqVO,
+    public void exportWarehouseExcel(@Valid WarehousePageReqVO pageVO,
               HttpServletResponse response) throws IOException {
-        pageReqVO.setPageSize(PageParam.PAGE_SIZE_NONE);
-        List<WarehouseDO> list = warehouseService.getWarehousePage(pageReqVO).getList();
+        pageVO.setPageSize(PageParam.PAGE_SIZE_NONE);
+        List<WarehouseDO> list = warehouseService.getWarehousePage(pageVO).getList();
         // 导出 Excel
-        ExcelUtils.write(response, "仓库.xls", "数据", WarehouseRespVO.class,
-                        BeanUtils.toBean(list, WarehouseRespVO.class));
+        ExcelUtils.write(response, "仓库数据.xls", "数据", WarehouseRespVO.class,
+                BeanUtils.toBean(list, WarehouseRespVO.class));
+    }
+
+    @GetMapping("/simple-list")
+    @Operation(summary = "获得简单仓库列表")
+    @PreAuthorize("@ss.hasPermission('wms:warehouse:query')")
+    public CommonResult<List<WarehouseSimpleRespVO>> getSimpleWarehouseList() {
+        List<WarehouseDO> list = warehouseService.getWarehouseList();
+        return success(BeanUtils.toBean(list, WarehouseSimpleRespVO.class));
     }
 
 }

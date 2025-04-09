@@ -1,9 +1,6 @@
 package cn.smart.wms.module.wms.dal.dataobject.location;
 
 import lombok.*;
-import java.util.*;
-import java.time.LocalDateTime;
-import java.time.LocalDateTime;
 import com.baomidou.mybatisplus.annotation.*;
 import cn.smart.wms.framework.mybatis.core.dataobject.BaseDO;
 
@@ -27,26 +24,42 @@ public class LocationDO extends BaseDO {
      */
     @TableId
     private Long id;
+
     /**
-     * 库位编码
+     * 仓库ID
+     */
+    private Long warehouseId;
+
+    /**
+     * 货区ID
+     */
+    private Long areaId;
+
+    /**
+     * 货架ID
+     */
+    private Long rackId;
+
+    /**
+     * 库位编号
      */
     private String locationCode;
+
     /**
      * 库位名称
      */
     private String locationName;
+
     /**
-     * 所属货架ID
-     */
-    private Long rackId;
-    /**
-     * 库位类型(0-普通 1-快检 2-退货)
+     * 库位类型
      */
     private Integer locationType;
+
     /**
-     * 状态(0-空闲 1-占用 2-锁定 3-禁用)
+     * 库位状态（0正常 1停用）
      */
     private Integer status;
+
     /**
      * 备注
      */

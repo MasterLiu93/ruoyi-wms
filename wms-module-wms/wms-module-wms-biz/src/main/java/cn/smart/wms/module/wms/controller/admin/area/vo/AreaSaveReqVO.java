@@ -1,9 +1,10 @@
 package cn.smart.wms.module.wms.controller.admin.area.vo;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
-import java.util.*;
-import javax.validation.constraints.*;
+import lombok.Data;
+
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 @Schema(description = "管理后台 - 货区新增/修改 Request VO")
 @Data
@@ -12,8 +13,7 @@ public class AreaSaveReqVO {
     @Schema(description = "货区ID", requiredMode = Schema.RequiredMode.REQUIRED, example = "8262")
     private Long id;
 
-    @Schema(description = "货区编码", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotEmpty(message = "货区编码不能为空")
+    @Schema(description = "货区编码")
     private String areaCode;
 
     @Schema(description = "货区名称", requiredMode = Schema.RequiredMode.REQUIRED, example = "赵六")

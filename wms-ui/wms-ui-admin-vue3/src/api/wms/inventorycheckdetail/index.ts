@@ -44,4 +44,4 @@ export const InventoryCheckDetailApi = {
   exportInventoryCheckDetail: async (params) => {
     return await request.download({ url: `/wms/inventory-check-detail/export-excel`, params })
   },
-}
+}

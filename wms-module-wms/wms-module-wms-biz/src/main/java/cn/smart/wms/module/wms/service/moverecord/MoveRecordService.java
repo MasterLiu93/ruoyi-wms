@@ -1,11 +1,11 @@
 package cn.smart.wms.module.wms.service.moverecord;
 
-import java.util.*;
-import javax.validation.*;
-import cn.smart.wms.module.wms.controller.admin.moverecord.vo.*;
-import cn.smart.wms.module.wms.dal.dataobject.moverecord.MoveRecordDO;
 import cn.smart.wms.framework.common.pojo.PageResult;
-import cn.smart.wms.framework.common.pojo.PageParam;
+import cn.smart.wms.module.wms.controller.admin.moverecord.vo.MoveRecordPageReqVO;
+import cn.smart.wms.module.wms.controller.admin.moverecord.vo.MoveRecordSaveReqVO;
+import cn.smart.wms.module.wms.dal.dataobject.moverecord.MoveRecordDO;
+
+import javax.validation.Valid;
 
 /**
  * 移库操作记录 Service 接口

@@ -2,7 +2,7 @@ package cn.smart.wms.module.wms.controller.admin.warehouse.vo;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
-import java.util.*;
+
 import javax.validation.constraints.*;
 import java.math.BigDecimal;
 
@@ -13,8 +13,7 @@ public class WarehouseSaveReqVO {
     @Schema(description = "仓库ID", requiredMode = Schema.RequiredMode.REQUIRED, example = "7817")
     private Long id;
 
-    @Schema(description = "仓库编码", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotEmpty(message = "仓库编码不能为空")
+    @Schema(description = "仓库编码")
     private String warehouseCode;
 
     @Schema(description = "仓库名称", requiredMode = Schema.RequiredMode.REQUIRED, example = "王五")

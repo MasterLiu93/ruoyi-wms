@@ -44,62 +44,15 @@
           class="!w-240px"
         />
       </el-form-item>
-      <el-form-item label="库存数量" prop="stockCount">
-        <el-input
-          v-model="queryParams.stockCount"
-          placeholder="请输入库存数量"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="可用数量" prop="availableCount">
-        <el-input
-          v-model="queryParams.availableCount"
-          placeholder="请输入可用数量"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="锁定数量" prop="lockedCount">
-        <el-input
-          v-model="queryParams.lockedCount"
-          placeholder="请输入锁定数量"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
       <el-form-item label="状态" prop="status">
-        <el-select
-          v-model="queryParams.status"
-          placeholder="请选择状态"
-          clearable
-          class="!w-240px"
-        >
-          <el-option label="请选择字典生成" value="" />
+        <el-select v-model="queryParams.status" placeholder="请选择状态" clearable class="!w-240px">
+          <el-option
+            v-for="dict in getIntDictOptions(DICT_TYPE.COMMON_STATUS)"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
         </el-select>
-      </el-form-item>
-      <el-form-item label="备注" prop="remark">
-        <el-input
-          v-model="queryParams.remark"
-          placeholder="请输入备注"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="创建时间" prop="createTime">
-        <el-date-picker
-          v-model="queryParams.createTime"
-          value-format="YYYY-MM-DD HH:mm:ss"
-          type="daterange"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          :default-time="[new Date('1 00:00:00'), new Date('1 23:59:59')]"
-          class="!w-220px"
-        />
       </el-form-item>
       <el-form-item>
         <el-button @click="handleQuery"><Icon icon="ep:search" class="mr-5px" /> 搜索</el-button>
@@ -184,6 +137,7 @@ import { dateFormatter } from '@/utils/formatTime'
 import download from '@/utils/download'
 import { BatchInventoryApi, BatchInventoryVO } from '@/api/wms/batchinventory'
 import BatchInventoryForm from './BatchInventoryForm.vue'
+import { DICT_TYPE, getIntDictOptions } from '@/utils/dict'
 
 /** 批次库存 列表 */
 defineOptions({ name: 'BatchInventory' })

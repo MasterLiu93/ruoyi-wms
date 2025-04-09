@@ -9,4 +9,66 @@
         文档可见：https://www.iocoder.cn/MyBatis/x-plugins/
      -->
 
+    <sql id="selectColumns">
+        c.id,
+        c.check_no,
+        c.warehouse_id,
+        c.check_type,
+        c.check_status,
+        c.total_count,
+        c.checked_count,
+        c.difference_count,
+        c.remark,
+        c.creator,
+        c.create_time,
+        c.updater,
+        c.update_time,
+        c.deleted,
+        w.warehouse_name AS warehouseName
+    </sql>
+
+    <sql id="joinTables">
+        LEFT JOIN wms_warehouse w ON c.warehouse_id = w.id
+    </sql>
+
+    <select id="selectByIdWithDetails" resultType="cn.smart.wms.module.wms.dal.dataobject.inventorycheck.InventoryCheckDO">
+        SELECT
+        <include refid="selectColumns"/>
+        FROM wms_inventory_check c
+        <include refid="joinTables"/>
+        WHERE c.id = #{id}
+        AND c.deleted = FALSE
+    </select>
+
+    <select id="selectPageWithDetails" resultType="cn.smart.wms.module.wms.dal.dataobject.inventorycheck.InventoryCheckDO">
+        SELECT
+        <include refid="selectColumns"/>
+        FROM wms_inventory_check c
+        <include refid="joinTables"/>
+        <where>
+            c.deleted = FALSE
+            <if test="reqVO.warehouseId != null">AND c.warehouse_id = #{reqVO.warehouseId}</if>
+            <if test="reqVO.checkType != null">AND c.check_type = #{reqVO.checkType}</if>
+            <if test="reqVO.checkStatus != null">AND c.check_status = #{reqVO.checkStatus}</if>
+            <if test="reqVO.checkNo != null and reqVO.checkNo != ''">AND c.check_no LIKE CONCAT('%', #{reqVO.checkNo}, '%')</if>
+            <if test="reqVO.createTime != null">AND c.create_time BETWEEN #{reqVO.createTime[0]} AND #{reqVO.createTime[1]}</if>
+        </where>
+        ORDER BY c.id DESC
+        LIMIT #{reqVO.pageSize} OFFSET #{offset}
+    </select>
+
+    <select id="selectPageCount" resultType="java.lang.Long">
+        SELECT COUNT(*)
+        FROM wms_inventory_check c
+        <include refid="joinTables"/>
+        <where>
+            c.deleted = FALSE
+            <if test="reqVO.warehouseId != null">AND c.warehouse_id = #{reqVO.warehouseId}</if>
+            <if test="reqVO.checkType != null">AND c.check_type = #{reqVO.checkType}</if>
+            <if test="reqVO.checkStatus != null">AND c.check_status = #{reqVO.checkStatus}</if>
+            <if test="reqVO.checkNo != null and reqVO.checkNo != ''">AND c.check_no LIKE CONCAT('%', #{reqVO.checkNo}, '%')</if>
+            <if test="reqVO.createTime != null">AND c.create_time BETWEEN #{reqVO.createTime[0]} AND #{reqVO.createTime[1]}</if>
+        </where>
+    </select>
+
 </mapper>

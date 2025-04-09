@@ -1,13 +1,11 @@
 package cn.smart.wms.module.wms.dal.mysql.supplier;
 
-import java.util.*;
-
 import cn.smart.wms.framework.common.pojo.PageResult;
-import cn.smart.wms.framework.mybatis.core.query.LambdaQueryWrapperX;
 import cn.smart.wms.framework.mybatis.core.mapper.BaseMapperX;
+import cn.smart.wms.framework.mybatis.core.query.LambdaQueryWrapperX;
+import cn.smart.wms.module.wms.controller.admin.supplier.vo.SupplierPageReqVO;
 import cn.smart.wms.module.wms.dal.dataobject.supplier.SupplierDO;
 import org.apache.ibatis.annotations.Mapper;
-import cn.smart.wms.module.wms.controller.admin.supplier.vo.*;
 
 /**
  * 供应商 Mapper
@@ -33,5 +31,14 @@ public interface SupplierMapper extends BaseMapperX<SupplierDO> {
                 .betweenIfPresent(SupplierDO::getCreateTime, reqVO.getCreateTime())
                 .orderByDesc(SupplierDO::getId));
     }
-
+    
+    /**
+     * 根据供应商编码查询供应商
+     *
+     * @param supplierCode 供应商编码
+     * @return 供应商
+     */
+    default SupplierDO selectBySupplierCode(String supplierCode) {
+        return selectOne(SupplierDO::getSupplierCode, supplierCode);
+    }
 }

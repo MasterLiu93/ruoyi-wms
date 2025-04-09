@@ -7,8 +7,8 @@
       label-width="100px"
       v-loading="formLoading"
     >
-      <el-form-item label="供应商编码" prop="supplierCode">
-        <el-input v-model="formData.supplierCode" placeholder="请输入供应商编码" />
+      <el-form-item label="供应商编码" prop="supplierCode" v-if="formType === 'update'">
+        <el-input v-model="formData.supplierCode" placeholder="请输入供应商编码" disabled />
       </el-form-item>
       <el-form-item label="供应商名称" prop="supplierName">
         <el-input v-model="formData.supplierName" placeholder="请输入供应商名称" />
@@ -89,7 +89,6 @@ const formData = ref({
   remark: undefined,
 })
 const formRules = reactive({
-  supplierCode: [{ required: true, message: '供应商编码不能为空', trigger: 'blur' }],
   supplierName: [{ required: true, message: '供应商名称不能为空', trigger: 'blur' }],
   supplierLevel: [{ required: true, message: '供应商级别不能为空', trigger: 'blur' }],
   contact: [{ required: true, message: '联系人不能为空', trigger: 'blur' }],

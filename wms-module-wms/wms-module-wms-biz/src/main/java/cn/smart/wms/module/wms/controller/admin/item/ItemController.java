@@ -1,33 +1,32 @@
 package cn.smart.wms.module.wms.controller.admin.item;
 
-import org.springframework.web.bind.annotation.*;
-import javax.annotation.Resource;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.security.access.prepost.PreAuthorize;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.Operation;
-
-import javax.validation.constraints.*;
-import javax.validation.*;
-import javax.servlet.http.*;
-import java.util.*;
-import java.io.IOException;
-
+import cn.smart.wms.framework.apilog.core.annotation.ApiAccessLog;
+import cn.smart.wms.framework.common.pojo.CommonResult;
 import cn.smart.wms.framework.common.pojo.PageParam;
 import cn.smart.wms.framework.common.pojo.PageResult;
-import cn.smart.wms.framework.common.pojo.CommonResult;
 import cn.smart.wms.framework.common.util.object.BeanUtils;
-import static cn.smart.wms.framework.common.pojo.CommonResult.success;
-
 import cn.smart.wms.framework.excel.core.util.ExcelUtils;
-
-import cn.smart.wms.framework.apilog.core.annotation.ApiAccessLog;
-import static cn.smart.wms.framework.apilog.core.enums.OperateTypeEnum.*;
-
-import cn.smart.wms.module.wms.controller.admin.item.vo.*;
+import cn.smart.wms.framework.idgenerator.core.IdGeneratorFactory;
+import cn.smart.wms.module.wms.controller.admin.item.vo.ItemPageReqVO;
+import cn.smart.wms.module.wms.controller.admin.item.vo.ItemRespVO;
+import cn.smart.wms.module.wms.controller.admin.item.vo.ItemSaveReqVO;
 import cn.smart.wms.module.wms.dal.dataobject.item.ItemDO;
 import cn.smart.wms.module.wms.service.item.ItemService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import java.io.IOException;
+import java.util.List;
+
+import static cn.smart.wms.framework.apilog.core.enums.OperateTypeEnum.EXPORT;
+import static cn.smart.wms.framework.common.pojo.CommonResult.success;
 
 @Tag(name = "管理后台 - 物料")
 @RestController
@@ -37,11 +36,18 @@ public class ItemController {
 
     @Resource
     private ItemService itemService;
+    
+    @Resource
+    private IdGeneratorFactory idGeneratorFactory;
 
     @PostMapping("/create")
     @Operation(summary = "创建物料")
     @PreAuthorize("@ss.hasPermission('wms:item:create')")
     public CommonResult<Long> createItem(@Valid @RequestBody ItemSaveReqVO createReqVO) {
+        // 自动生成物料编码，不再依赖前端传入
+        if (createReqVO.getItemCode() == null || createReqVO.getItemCode().isEmpty()) {
+            createReqVO.setItemCode(idGeneratorFactory.generateItemCode());
+        }
         return success(itemService.createItem(createReqVO));
     }
 
@@ -74,8 +80,8 @@ public class ItemController {
     @GetMapping("/page")
     @Operation(summary = "获得物料分页")
     @PreAuthorize("@ss.hasPermission('wms:item:query')")
-    public CommonResult<PageResult<ItemRespVO>> getItemPage(@Valid ItemPageReqVO pageReqVO) {
-        PageResult<ItemDO> pageResult = itemService.getItemPage(pageReqVO);
+    public CommonResult<PageResult<ItemRespVO>> getItemPage(@Valid ItemPageReqVO pageVO) {
+        PageResult<ItemDO> pageResult = itemService.getItemPage(pageVO);
         return success(BeanUtils.toBean(pageResult, ItemRespVO.class));
     }
 
@@ -83,12 +89,12 @@ public class ItemController {
     @Operation(summary = "导出物料 Excel")
     @PreAuthorize("@ss.hasPermission('wms:item:export')")
     @ApiAccessLog(operateType = EXPORT)
-    public void exportItemExcel(@Valid ItemPageReqVO pageReqVO,
+    public void exportItemExcel(@Valid ItemPageReqVO pageVO,
               HttpServletResponse response) throws IOException {
-        pageReqVO.setPageSize(PageParam.PAGE_SIZE_NONE);
-        List<ItemDO> list = itemService.getItemPage(pageReqVO).getList();
+        pageVO.setPageSize(PageParam.PAGE_SIZE_NONE);
+        List<ItemDO> list = itemService.getItemPage(pageVO).getList();
         // 导出 Excel
-        ExcelUtils.write(response, "物料.xls", "数据", ItemRespVO.class,
+        ExcelUtils.write(response, "物料数据.xls", "数据", ItemRespVO.class,
                         BeanUtils.toBean(list, ItemRespVO.class));
     }
 

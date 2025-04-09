@@ -1,45 +1,66 @@
 package cn.smart.wms.module.wms.controller.admin.moverecord.vo;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
-import java.util.*;
-import javax.validation.constraints.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
-@Schema(description = "管理后台 - 移库操作记录新增/修改 Request VO")
+import javax.validation.constraints.NotNull;
+
+@Schema(description = "管理后台 - 移库记录创建/更新 Request VO")
 @Data
-public class MoveRecordSaveReqVO {
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
+public class MoveRecordSaveReqVO extends MoveRecordBaseVO {
 
-    @Schema(description = "记录ID", requiredMode = Schema.RequiredMode.REQUIRED, example = "12")
+    @Schema(description = "移库记录编号", example = "123")
     private Long id;
 
-    @Schema(description = "移库单ID", requiredMode = Schema.RequiredMode.REQUIRED, example = "2995")
+}
+
+/**
+ * 通用移库记录基础对象
+ */
+@Schema(description = "管理后台 - 移库记录基础对象 VO")
+@Data
+class MoveRecordBaseVO {
+
+    @Schema(description = "移库单ID", requiredMode = Schema.RequiredMode.REQUIRED, example = "1024")
     @NotNull(message = "移库单ID不能为空")
     private Long moveOrderId;
 
-    @Schema(description = "移库单明细ID", requiredMode = Schema.RequiredMode.REQUIRED, example = "16221")
+    @Schema(description = "移库单明细ID", requiredMode = Schema.RequiredMode.REQUIRED, example = "2048")
     @NotNull(message = "移库单明细ID不能为空")
     private Long moveOrderDetailId;
 
-    @Schema(description = "物料ID", requiredMode = Schema.RequiredMode.REQUIRED, example = "321")
+    @Schema(description = "物料ID", requiredMode = Schema.RequiredMode.REQUIRED, example = "1024")
     @NotNull(message = "物料ID不能为空")
     private Long itemId;
 
-    @Schema(description = "批次ID", example = "21284")
+    @Schema(description = "批次ID", example = "2048")
     private Long batchId;
 
-    @Schema(description = "源库位ID", requiredMode = Schema.RequiredMode.REQUIRED, example = "28855")
+    @Schema(description = "源仓库ID", requiredMode = Schema.RequiredMode.REQUIRED, example = "1024")
+    @NotNull(message = "源仓库ID不能为空")
+    private Long fromWarehouseId;
+
+    @Schema(description = "目标仓库ID", requiredMode = Schema.RequiredMode.REQUIRED, example = "1024")
+    @NotNull(message = "目标仓库ID不能为空")
+    private Long toWarehouseId;
+
+    @Schema(description = "源库位ID", requiredMode = Schema.RequiredMode.REQUIRED, example = "1024")
     @NotNull(message = "源库位ID不能为空")
     private Long fromLocationId;
 
-    @Schema(description = "目标库位ID", requiredMode = Schema.RequiredMode.REQUIRED, example = "3389")
+    @Schema(description = "目标库位ID", requiredMode = Schema.RequiredMode.REQUIRED, example = "1024")
     @NotNull(message = "目标库位ID不能为空")
     private Long toLocationId;
 
-    @Schema(description = "移动数量", requiredMode = Schema.RequiredMode.REQUIRED, example = "3815")
-    @NotNull(message = "移动数量不能为空")
+    @Schema(description = "移库数量", requiredMode = Schema.RequiredMode.REQUIRED, example = "100")
+    @NotNull(message = "移库数量不能为空")
     private Integer count;
 
-    @Schema(description = "备注", example = "你猜")
+    @Schema(description = "备注", example = "正常移库")
     private String remark;
 
 }

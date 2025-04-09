@@ -27,42 +27,6 @@
           <el-option label="请选择字典生成" value="" />
         </el-select>
       </el-form-item>
-      <el-form-item label="源仓库ID" prop="fromWarehouseId">
-        <el-input
-          v-model="queryParams.fromWarehouseId"
-          placeholder="请输入源仓库ID"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="目标仓库ID" prop="toWarehouseId">
-        <el-input
-          v-model="queryParams.toWarehouseId"
-          placeholder="请输入目标仓库ID"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="源库位ID" prop="fromLocationId">
-        <el-input
-          v-model="queryParams.fromLocationId"
-          placeholder="请输入源库位ID"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="目标库位ID" prop="toLocationId">
-        <el-input
-          v-model="queryParams.toLocationId"
-          placeholder="请输入目标库位ID"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
       <el-form-item label="单据状态" prop="orderStatus">
         <el-select
           v-model="queryParams.orderStatus"
@@ -82,35 +46,6 @@
         >
           <el-option label="请选择字典生成" value="" />
         </el-select>
-      </el-form-item>
-      <el-form-item label="商品数量" prop="totalCount">
-        <el-input
-          v-model="queryParams.totalCount"
-          placeholder="请输入商品数量"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="备注" prop="remark">
-        <el-input
-          v-model="queryParams.remark"
-          placeholder="请输入备注"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="创建时间" prop="createTime">
-        <el-date-picker
-          v-model="queryParams.createTime"
-          value-format="YYYY-MM-DD HH:mm:ss"
-          type="daterange"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          :default-time="[new Date('1 00:00:00'), new Date('1 23:59:59')]"
-          class="!w-220px"
-        />
       </el-form-item>
       <el-form-item>
         <el-button @click="handleQuery"><Icon icon="ep:search" class="mr-5px" /> 搜索</el-button>
@@ -142,21 +77,8 @@
       <el-table-column label="移库单ID" align="center" prop="id" />
       <el-table-column label="移库单号" align="center" prop="moveOrderNo" />
       <el-table-column label="移库类型" align="center" prop="moveType" />
-      <el-table-column label="源仓库ID" align="center" prop="fromWarehouseId" />
-      <el-table-column label="目标仓库ID" align="center" prop="toWarehouseId" />
-      <el-table-column label="源库位ID" align="center" prop="fromLocationId" />
-      <el-table-column label="目标库位ID" align="center" prop="toLocationId" />
       <el-table-column label="单据状态" align="center" prop="orderStatus" />
       <el-table-column label="移库状态" align="center" prop="moveStatus" />
-      <el-table-column label="商品数量" align="center" prop="totalCount" />
-      <el-table-column label="备注" align="center" prop="remark" />
-      <el-table-column
-        label="创建时间"
-        align="center"
-        prop="createTime"
-        :formatter="dateFormatter"
-        width="180px"
-      />
       <el-table-column label="操作" align="center" min-width="120px">
         <template #default="scope">
           <el-button
@@ -213,15 +135,8 @@ const queryParams = reactive({
   pageSize: 10,
   moveOrderNo: undefined,
   moveType: undefined,
-  fromWarehouseId: undefined,
-  toWarehouseId: undefined,
-  fromLocationId: undefined,
-  toLocationId: undefined,
   orderStatus: undefined,
   moveStatus: undefined,
-  totalCount: undefined,
-  remark: undefined,
-  createTime: [],
 })
 const queryFormRef = ref() // 搜索的表单
 const exportLoading = ref(false) // 导出的加载中

@@ -2,7 +2,7 @@ package cn.smart.wms.module.wms.controller.admin.rack.vo;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
-import java.util.*;
+
 import javax.validation.constraints.*;
 
 @Schema(description = "管理后台 - 货架新增/修改 Request VO")
@@ -12,8 +12,7 @@ public class RackSaveReqVO {
     @Schema(description = "货架ID", requiredMode = Schema.RequiredMode.REQUIRED, example = "21002")
     private Long id;
 
-    @Schema(description = "货架编码", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotEmpty(message = "货架编码不能为空")
+    @Schema(description = "货架编码")
     private String rackCode;
 
     @Schema(description = "货架名称", requiredMode = Schema.RequiredMode.REQUIRED, example = "芋艿")

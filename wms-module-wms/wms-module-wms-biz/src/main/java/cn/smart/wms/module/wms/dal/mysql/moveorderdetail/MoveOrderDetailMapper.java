@@ -1,13 +1,11 @@
 package cn.smart.wms.module.wms.dal.mysql.moveorderdetail;
 
-import java.util.*;
-
 import cn.smart.wms.framework.common.pojo.PageResult;
-import cn.smart.wms.framework.mybatis.core.query.LambdaQueryWrapperX;
 import cn.smart.wms.framework.mybatis.core.mapper.BaseMapperX;
+import cn.smart.wms.framework.mybatis.core.query.LambdaQueryWrapperX;
+import cn.smart.wms.module.wms.controller.admin.moveorderdetail.vo.MoveOrderDetailPageReqVO;
 import cn.smart.wms.module.wms.dal.dataobject.moveorderdetail.MoveOrderDetailDO;
 import org.apache.ibatis.annotations.Mapper;
-import cn.smart.wms.module.wms.controller.admin.moveorderdetail.vo.*;
 
 /**
  * 移库单明细 Mapper

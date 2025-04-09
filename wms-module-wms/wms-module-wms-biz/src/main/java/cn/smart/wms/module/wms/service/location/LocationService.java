@@ -1,11 +1,13 @@
 package cn.smart.wms.module.wms.service.location;
 
-import java.util.*;
-import javax.validation.*;
-import cn.smart.wms.module.wms.controller.admin.location.vo.*;
-import cn.smart.wms.module.wms.dal.dataobject.location.LocationDO;
 import cn.smart.wms.framework.common.pojo.PageResult;
-import cn.smart.wms.framework.common.pojo.PageParam;
+import cn.smart.wms.module.wms.controller.admin.location.vo.LocationPageReqVO;
+import cn.smart.wms.module.wms.controller.admin.location.vo.LocationSaveReqVO;
+import cn.smart.wms.module.wms.dal.dataobject.location.LocationDO;
+
+import javax.validation.Valid;
+import java.util.List;
+import java.util.Set;
 
 /**
  * 库位 Service 接口
@@ -51,5 +53,21 @@ public interface LocationService {
      * @return 库位分页
      */
     PageResult<LocationDO> getLocationPage(LocationPageReqVO pageReqVO);
+
+    /**
+     * 获取库位列表
+     *
+     * @param rackId 货架ID，如果为空则获取所有库位
+     * @return 库位列表
+     */
+    List<LocationDO> getLocationList(Long rackId);
+    
+    /**
+     * 批量获取库位信息
+     *
+     * @param ids 库位ID集合
+     * @return 库位列表
+     */
+    List<LocationDO> getLocationListByIds(Set<Long> ids);
 
 }

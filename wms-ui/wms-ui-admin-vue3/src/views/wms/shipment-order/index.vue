@@ -32,24 +32,6 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="客户ID" prop="customerId">
-        <el-input
-          v-model="queryParams.customerId"
-          placeholder="请输入客户ID"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="仓库ID" prop="warehouseId">
-        <el-input
-          v-model="queryParams.warehouseId"
-          placeholder="请输入仓库ID"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
       <el-form-item label="单据状态" prop="orderStatus">
         <el-select
           v-model="queryParams.orderStatus"
@@ -79,66 +61,6 @@
             :value="dict.value"
           />
         </el-select>
-      </el-form-item>
-      <el-form-item label="预计出库时间" prop="expectTime">
-        <el-date-picker
-          v-model="queryParams.expectTime"
-          value-format="YYYY-MM-DD HH:mm:ss"
-          type="daterange"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          :default-time="[new Date('1 00:00:00'), new Date('1 23:59:59')]"
-          class="!w-220px"
-        />
-      </el-form-item>
-      <el-form-item label="实际完成时间" prop="completeTime">
-        <el-date-picker
-          v-model="queryParams.completeTime"
-          value-format="YYYY-MM-DD HH:mm:ss"
-          type="daterange"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          :default-time="[new Date('1 00:00:00'), new Date('1 23:59:59')]"
-          class="!w-220px"
-        />
-      </el-form-item>
-      <el-form-item label="商品数量" prop="totalCount">
-        <el-input
-          v-model="queryParams.totalCount"
-          placeholder="请输入商品数量"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="商品金额" prop="totalAmount">
-        <el-input
-          v-model="queryParams.totalAmount"
-          placeholder="请输入商品金额"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="备注" prop="remark">
-        <el-input
-          v-model="queryParams.remark"
-          placeholder="请输入备注"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="创建时间" prop="createTime">
-        <el-date-picker
-          v-model="queryParams.createTime"
-          value-format="YYYY-MM-DD HH:mm:ss"
-          type="daterange"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          :default-time="[new Date('1 00:00:00'), new Date('1 23:59:59')]"
-          class="!w-220px"
-        />
       </el-form-item>
       <el-form-item>
         <el-button @click="handleQuery"><Icon icon="ep:search" class="mr-5px" /> 搜索</el-button>
@@ -174,8 +96,6 @@
           <dict-tag :type="DICT_TYPE.WMS_SHIPMENT_TYPE" :value="scope.row.shipmentType" />
         </template>
       </el-table-column>
-      <el-table-column label="客户ID" align="center" prop="customerId" />
-      <el-table-column label="仓库ID" align="center" prop="warehouseId" />
       <el-table-column label="单据状态" align="center" prop="orderStatus">
         <template #default="scope">
           <dict-tag :type="DICT_TYPE.WMS_SHIPMENT_ORDER_STATUS" :value="scope.row.orderStatus" />
@@ -190,44 +110,103 @@
         label="预计出库时间"
         align="center"
         prop="expectTime"
+        width="160"
         :formatter="dateFormatter"
-        width="180px"
       />
       <el-table-column
-        label="实际完成时间"
+        label="完成时间"
         align="center"
         prop="completeTime"
+        width="160"
         :formatter="dateFormatter"
-        width="180px"
       />
-      <el-table-column label="商品数量" align="center" prop="totalCount" />
-      <el-table-column label="商品金额" align="center" prop="totalAmount" />
-      <el-table-column label="备注" align="center" prop="remark" />
-      <el-table-column
-        label="创建时间"
-        align="center"
-        prop="createTime"
-        :formatter="dateFormatter"
-        width="180px"
-      />
-      <el-table-column label="操作" align="center" min-width="120px">
+      <el-table-column label="备注" align="center" prop="remark" :show-overflow-tooltip="true" />
+      <el-table-column label="操作" min-width="240" align="center" fixed="right">
         <template #default="scope">
-          <el-button
-            link
-            type="primary"
-            @click="openForm('update', scope.row.id)"
-            v-hasPermi="['wms:shipment-order:update']"
-          >
-            编辑
-          </el-button>
-          <el-button
-            link
-            type="danger"
-            @click="handleDelete(scope.row.id)"
-            v-hasPermi="['wms:shipment-order:delete']"
-          >
-            删除
-          </el-button>
+          <div class="operation-buttons">
+            <!-- 查看按钮 - 任何状态都可查看 -->
+            <el-button
+              link
+              type="primary"
+              @click="openForm('view', scope.row.id)"
+              v-hasPermi="['wms:shipment-order:query']"
+              class="operation-btn"
+            >
+              查看
+            </el-button>
+            
+            <!-- 审核按钮 - 仅待审核状态可审核 -->
+            <el-button
+              v-if="scope.row.orderStatus === 1"
+              link
+              type="primary"
+              @click="handleApprove(scope.row.id)"
+              v-hasPermi="['wms:shipment-order:approve']"
+              class="operation-btn"
+            >
+              审核
+            </el-button>
+            
+            <!-- 编辑按钮 - 仅草稿状态可编辑 -->
+            <el-button
+              v-if="scope.row.orderStatus === 0"
+              link
+              type="primary"
+              @click="openForm('edit', scope.row.id)"
+              v-hasPermi="['wms:shipment-order:update']"
+              class="operation-btn"
+            >
+              编辑
+            </el-button>
+            
+            <!-- 提交按钮 - 仅草稿状态可提交 -->
+            <el-button
+              v-if="scope.row.orderStatus === 0"
+              link
+              type="primary"
+              @click="handleSubmit(scope.row.id)"
+              v-hasPermi="['wms:shipment-order:submit']"
+              class="operation-btn"
+            >
+              提交
+            </el-button>
+            
+            <!-- 批量出库按钮 - 仅审核通过且未完成状态可出库 -->
+            <el-button
+              v-if="scope.row.orderStatus === 2 && scope.row.shipmentStatus !== 2" 
+              link
+              type="success"
+              @click="handleBatchShipment(scope.row.id)"
+              v-hasPermi="['wms:shipment-order:shipment']"
+              class="operation-btn"
+            >
+              批量出库
+            </el-button>
+            
+            <!-- 取消按钮 - 仅草稿或待审核状态可取消 -->
+            <el-button
+              v-if="scope.row.orderStatus < 2"
+              link
+              type="warning"
+              @click="handleCancel(scope.row.id)"
+              v-hasPermi="['wms:shipment-order:update']"
+              class="operation-btn"
+            >
+              取消
+            </el-button>
+            
+            <!-- 删除按钮 - 仅草稿或已取消状态可删除 -->
+            <el-button
+              v-if="scope.row.orderStatus === 0 || scope.row.orderStatus === 4"
+              link
+              type="danger"
+              @click="handleDelete(scope.row.id)"
+              v-hasPermi="['wms:shipment-order:delete']"
+              class="operation-btn"
+            >
+              删除
+            </el-button>
+          </div>
         </template>
       </el-table-column>
     </el-table>
@@ -242,6 +221,9 @@
 
   <!-- 表单弹窗：添加/修改 -->
   <ShipmentOrderForm ref="formRef" @success="getList" />
+  
+  <!-- 审核弹窗 -->
+  <ShipmentOrderApproveForm ref="approveFormRef" @success="getList" />
 </template>
 
 <script setup lang="ts">
@@ -249,8 +231,10 @@ import { dateFormatter } from '@/utils/formatTime'
 import download from '@/utils/download'
 import { ShipmentOrderApi, ShipmentOrderVO } from '@/api/wms/shipmentorder'
 import ShipmentOrderForm from './ShipmentOrderForm.vue'
+import ShipmentOrderApproveForm from './ShipmentOrderApproveForm.vue'
 import { DICT_TYPE, getIntDictOptions } from '@/utils/dict'
 import { DictTag } from '@/components/DictTag'
+import { ElMessageBox, ElMessage } from 'element-plus'
 
 /** 出库单 列表 */
 defineOptions({ name: 'ShipmentOrder' })
@@ -266,16 +250,8 @@ const queryParams = reactive({
   pageSize: 10,
   shipmentOrderNo: undefined,
   shipmentType: undefined,
-  customerId: undefined,
-  warehouseId: undefined,
   orderStatus: undefined,
   shipmentStatus: undefined,
-  expectTime: [],
-  completeTime: [],
-  totalCount: undefined,
-  totalAmount: undefined,
-  remark: undefined,
-  createTime: [],
 })
 const queryFormRef = ref() // 搜索的表单
 const exportLoading = ref(false) // 导出的加载中
@@ -338,8 +314,102 @@ const handleExport = async () => {
   }
 }
 
+/** 提交出库单 */
+const handleSubmit = async (id: number) => {
+  try {
+    await ElMessageBox.confirm(
+      '确认要提交该出库单吗？',
+      '操作确认',
+      {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }
+    )
+    
+    await ShipmentOrderApi.submitShipmentOrder(id)
+    ElMessage.success('出库单提交成功')
+    await getList()
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+/** 审批出库单 */
+const approveFormRef = ref()
+const handleApprove = (id: number) => {
+  approveFormRef.value.open(id)
+}
+
+/** 批量出库操作 */
+const handleBatchShipment = async (id: number) => {
+  try {
+    await ElMessageBox.confirm(
+      '确认要执行批量出库操作吗？',
+      '操作确认',
+      {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }
+    )
+    
+    await ShipmentOrderApi.batchExecuteShipment(id)
+    ElMessage.success('批量出库操作成功')
+    await getList()
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+/** 取消出库单 */
+const handleCancel = async (id: number) => {
+  try {
+    // 使用输入框提示用户输入取消原因
+    const { value: remark, action } = await ElMessageBox.prompt(
+      '请输入取消原因',
+      '取消出库单',
+      {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        type: 'warning',
+        inputValidator: (value) => {
+          if (value && value.length > 200) {
+            return '取消原因不能超过200个字符'
+          }
+          return true
+        }
+      }
+    )
+    
+    // 当用户点击确认时，执行取消操作
+    if (action === 'confirm') {
+      await ShipmentOrderApi.cancelShipmentOrder(id, remark)
+      ElMessage.success('出库单已取消')
+      await getList()
+    }
+  } catch (error) {
+    if (error !== 'cancel') { // 不显示用户取消操作的错误信息
+      console.error(error)
+      ElMessage.error('取消出库单失败')
+    }
+  }
+}
+
 /** 初始化 **/
 onMounted(() => {
   getList()
 })
 </script>
+
+<style scoped>
+.operation-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.operation-btn {
+  margin: 3px;
+}
+</style>

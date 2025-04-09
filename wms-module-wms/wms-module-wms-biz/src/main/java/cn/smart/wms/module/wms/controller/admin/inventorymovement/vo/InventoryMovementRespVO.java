@@ -1,11 +1,11 @@
 package cn.smart.wms.module.wms.controller.admin.inventorymovement.vo;
 
+import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
+import com.alibaba.excel.annotation.ExcelProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
-import java.util.*;
-import org.springframework.format.annotation.DateTimeFormat;
+import lombok.Data;
+
 import java.time.LocalDateTime;
-import com.alibaba.excel.annotation.*;
 
 @Schema(description = "管理后台 - 库存移动记录 Response VO")
 @Data
@@ -28,13 +28,37 @@ public class InventoryMovementRespVO {
     @ExcelProperty("仓库ID")
     private Long warehouseId;
 
+    @Schema(description = "仓库名称", requiredMode = Schema.RequiredMode.REQUIRED)
+    @ExcelProperty("仓库名称")
+    private String warehouseName;
+
     @Schema(description = "库位ID", requiredMode = Schema.RequiredMode.REQUIRED, example = "9215")
     @ExcelProperty("库位ID")
     private Long locationId;
 
+    @Schema(description = "库位名称", requiredMode = Schema.RequiredMode.REQUIRED)
+    @ExcelProperty("库位名称")
+    private String locationName;
+
     @Schema(description = "物料ID", requiredMode = Schema.RequiredMode.REQUIRED, example = "14832")
     @ExcelProperty("物料ID")
     private Long itemId;
+
+    @Schema(description = "物料名称", requiredMode = Schema.RequiredMode.REQUIRED)
+    @ExcelProperty("物料名称")
+    private String itemName;
+
+    @Schema(description = "物料编码", requiredMode = Schema.RequiredMode.REQUIRED)
+    @ExcelProperty("物料编码")
+    private String itemCode;
+
+    @Schema(description = "规格型号")
+    @ExcelProperty("规格型号")
+    private String spec;
+
+    @Schema(description = "单位")
+    @ExcelProperty("单位")
+    private String unit;
 
     @Schema(description = "移动数量", requiredMode = Schema.RequiredMode.REQUIRED, example = "2819")
     @ExcelProperty("移动数量")

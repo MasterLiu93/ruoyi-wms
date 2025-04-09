@@ -2,7 +2,7 @@ package cn.smart.wms.module.wms.controller.admin.inventorycheckdetail.vo;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
-import java.util.*;
+
 import javax.validation.constraints.*;
 
 @Schema(description = "管理后台 - 库存盘点明细新增/修改 Request VO")

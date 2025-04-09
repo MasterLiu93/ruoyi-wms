@@ -1,11 +1,11 @@
 package cn.smart.wms.module.wms.service.customer;
 
-import java.util.*;
-import javax.validation.*;
-import cn.smart.wms.module.wms.controller.admin.customer.vo.*;
-import cn.smart.wms.module.wms.dal.dataobject.customer.CustomerDO;
 import cn.smart.wms.framework.common.pojo.PageResult;
-import cn.smart.wms.framework.common.pojo.PageParam;
+import cn.smart.wms.module.wms.controller.admin.customer.vo.CustomerPageReqVO;
+import cn.smart.wms.module.wms.controller.admin.customer.vo.CustomerSaveReqVO;
+import cn.smart.wms.module.wms.dal.dataobject.customer.CustomerDO;
+
+import javax.validation.Valid;
 
 /**
  * 客户 Service 接口

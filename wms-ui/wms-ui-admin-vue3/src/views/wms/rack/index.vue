@@ -26,14 +26,36 @@
           class="!w-240px"
         />
       </el-form-item>
-      <el-form-item label="所属货区ID" prop="areaId">
-        <el-input
-          v-model="queryParams.areaId"
-          placeholder="请输入所属货区ID"
+      <el-form-item label="所属仓库" prop="selectedWarehouseId">
+        <el-select
+          v-model="selectedWarehouseId"
+          placeholder="请选择所属仓库"
           clearable
-          @keyup.enter="handleQuery"
+          @change="handleWarehouseChange"
           class="!w-240px"
-        />
+        >
+          <el-option
+            v-for="item in warehouseOptions"
+            :key="item.id"
+            :label="item.warehouseName"
+            :value="item.id"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="所属货区" prop="areaId">
+        <el-select
+          v-model="queryParams.areaId"
+          placeholder="请选择所属货区"
+          clearable
+          class="!w-240px"
+        >
+          <el-option
+            v-for="item in areaOptions"
+            :key="item.id"
+            :label="item.areaName"
+            :value="item.id"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item label="货架类型" prop="rackType">
         <el-select
@@ -65,26 +87,6 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="备注" prop="remark">
-        <el-input
-          v-model="queryParams.remark"
-          placeholder="请输入备注"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="创建时间" prop="createTime">
-        <el-date-picker
-          v-model="queryParams.createTime"
-          value-format="YYYY-MM-DD HH:mm:ss"
-          type="daterange"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          :default-time="[new Date('1 00:00:00'), new Date('1 23:59:59')]"
-          class="!w-220px"
-        />
-      </el-form-item>
       <el-form-item>
         <el-button @click="handleQuery"><Icon icon="ep:search" class="mr-5px" /> 搜索</el-button>
         <el-button @click="resetQuery"><Icon icon="ep:refresh" class="mr-5px" /> 重置</el-button>
@@ -115,7 +117,11 @@
       <el-table-column label="货架ID" align="center" prop="id" />
       <el-table-column label="货架编码" align="center" prop="rackCode" />
       <el-table-column label="货架名称" align="center" prop="rackName" />
-      <el-table-column label="所属货区ID" align="center" prop="areaId" />
+      <el-table-column label="所属货区" align="center" prop="areaId">
+        <template #default="scope">
+          {{ areaMap[scope.row.areaId] || '未知货区' }}
+        </template>
+      </el-table-column>
       <el-table-column label="货架类型" align="center" prop="rackType">
         <template #default="scope">
           <dict-tag :type="DICT_TYPE.WMS_RACK_TYPE" :value="scope.row.rackType" />
@@ -172,6 +178,8 @@
 import { dateFormatter } from '@/utils/formatTime'
 import download from '@/utils/download'
 import { RackApi, RackVO } from '@/api/wms/rack'
+import { WarehouseApi } from '@/api/wms/warehouse'
+import { AreaApi } from '@/api/wms/area'
 import RackForm from './RackForm.vue'
 import { DICT_TYPE, getIntDictOptions } from '@/utils/dict'
 import DictTag from '@/components/DictTag/src/DictTag.vue'
@@ -185,6 +193,11 @@ const { t } = useI18n() // 国际化
 const loading = ref(true) // 列表的加载中
 const list = ref<RackVO[]>([]) // 列表的数据
 const total = ref(0) // 列表的总页数
+const warehouseOptions = ref<any[]>([]) // 仓库下拉选项
+const areaOptions = ref<any[]>([]) // 货区下拉选项
+const warehouseMap = ref<Record<number, string>>({}) // 仓库ID到名称的映射
+const areaMap = ref<Record<number, string>>({}) // 货区ID到名称的映射
+const selectedWarehouseId = ref<number | undefined>() // 当前选择的仓库ID
 const queryParams = reactive({
   pageNo: 1,
   pageSize: 10,
@@ -193,8 +206,6 @@ const queryParams = reactive({
   areaId: undefined,
   rackType: undefined,
   status: undefined,
-  remark: undefined,
-  createTime: [],
 })
 const queryFormRef = ref() // 搜索的表单
 const exportLoading = ref(false) // 导出的加载中
@@ -203,12 +214,77 @@ const exportLoading = ref(false) // 导出的加载中
 const getList = async () => {
   loading.value = true
   try {
+    // 获取仓库和货区列表，用于显示名称
+    if (warehouseOptions.value.length === 0) {
+      await getWarehouseOptions()
+    }
+    
     const data = await RackApi.getRackPage(queryParams)
     list.value = data.list
     total.value = data.total
+    
+    // 获取货区详情信息，用于获取仓库ID
+    await getAreaDetails()
   } finally {
     loading.value = false
   }
+}
+
+/** 获取仓库选项 */
+const getWarehouseOptions = async () => {
+  try {
+    const data = await WarehouseApi.getSimpleWarehouseList()
+    warehouseOptions.value = data
+    
+    // 构建仓库ID到名称的映射
+    warehouseMap.value = {}
+    data.forEach(item => {
+      warehouseMap.value[item.id] = item.warehouseName
+    })
+  } catch (error) {
+    console.error('获取仓库列表失败', error)
+  }
+}
+
+/** 获取货区选项 */
+const getAreaOptions = async (warehouseId?: number) => {
+  try {
+    const data = await AreaApi.getSimpleAreaList(warehouseId)
+    areaOptions.value = data
+    
+    // 构建货区ID到名称的映射
+    data.forEach(item => {
+      areaMap.value[item.id] = item.areaName
+    })
+  } catch (error) {
+    console.error('获取货区列表失败', error)
+  }
+}
+
+/** 获取货区详细信息，用于构建仓库和货区的关联 */
+const getAreaDetails = async () => {
+  try {
+    // 收集所有需要查询的货区ID
+    const areaIds = new Set(list.value.map(item => item.areaId))
+    
+    // 通过API获取这些货区的详细信息
+    const areaDetails = await Promise.all([...areaIds].map(id => AreaApi.getArea(id)))
+    
+    // 将货区信息添加到映射中
+    areaDetails.forEach(area => {
+      if (area) {
+        areaMap.value[area.id] = area.areaName
+      }
+    })
+  } catch (error) {
+    console.error('获取货区详情失败', error)
+  }
+}
+
+/** 处理仓库变更 */
+const handleWarehouseChange = async () => {
+  queryParams.areaId = undefined // 清空货区选择
+  await getAreaOptions(selectedWarehouseId.value)
 }
 
 /** 搜索按钮操作 */

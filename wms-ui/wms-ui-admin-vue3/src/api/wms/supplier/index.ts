@@ -16,6 +16,13 @@ export interface SupplierVO {
   remark: string // 备注
 }
 
+// 供应商精简 VO
+export interface SupplierSimpleVO {
+  id: number // 供应商ID
+  supplierCode: string // 供应商编码
+  supplierName: string // 供应商名称
+}
+
 // 供应商 API
 export const SupplierApi = {
   // 查询供应商分页
@@ -47,4 +54,9 @@ export const SupplierApi = {
   exportSupplier: async (params) => {
     return await request.download({ url: `/wms/supplier/export-excel`, params })
   },
-}
+  
+  // 获取简单供应商列表
+  getSimpleSupplierList: async () => {
+    return await request.get({ url: `/wms/supplier/simple-list` })
+  }
+}

@@ -1,18 +1,21 @@
 package cn.smart.wms.module.wms.service.area;
 
-import org.springframework.stereotype.Service;
-import javax.annotation.Resource;
-import org.springframework.validation.annotation.Validated;
-
-import cn.smart.wms.module.wms.controller.admin.area.vo.*;
-import cn.smart.wms.module.wms.dal.dataobject.area.AreaDO;
 import cn.smart.wms.framework.common.pojo.PageResult;
 import cn.smart.wms.framework.common.util.object.BeanUtils;
-
+import cn.smart.wms.module.wms.controller.admin.area.vo.AreaPageReqVO;
+import cn.smart.wms.module.wms.controller.admin.area.vo.AreaSaveReqVO;
+import cn.smart.wms.module.wms.dal.dataobject.area.AreaDO;
 import cn.smart.wms.module.wms.dal.mysql.area.WmsAreaMapper;
+import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
+
+import javax.annotation.Resource;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 import static cn.smart.wms.framework.common.exception.util.ServiceExceptionUtil.exception;
-import static cn.smart.wms.module.wms.enums.ErrorCodeConstants.*;
+import static cn.smart.wms.module.wms.enums.ErrorCodeConstants.AREA_NOT_EXISTS;
 
 /**
  * 货区 Service 实现类
@@ -66,6 +69,22 @@ public class WmsAreaServiceImpl implements WmsAreaService {
     @Override
     public PageResult<AreaDO> getAreaPage(AreaPageReqVO pageReqVO) {
         return areaMapper.selectPage(pageReqVO);
+    }
+
+    @Override
+    public List<AreaDO> getAreaList(Set<Long> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return areaMapper.selectBatchIds(ids);
+    }
+
+    @Override
+    public List<AreaDO> getAreaListByWarehouseId(Long warehouseId) {
+        if (warehouseId == null) {
+            return Collections.emptyList();
+        }
+        return areaMapper.selectListByWarehouseId(warehouseId);
     }
 
 }

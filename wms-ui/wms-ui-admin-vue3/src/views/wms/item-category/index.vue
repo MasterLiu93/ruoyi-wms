@@ -26,24 +26,6 @@
           class="!w-240px"
         />
       </el-form-item>
-      <el-form-item label="父分类ID" prop="parentId">
-        <el-input
-          v-model="queryParams.parentId"
-          placeholder="请输入父分类ID"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="显示顺序" prop="sort">
-        <el-input
-          v-model="queryParams.sort"
-          placeholder="请输入显示顺序"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
       <el-form-item label="状态" prop="status">
         <el-select
           v-model="queryParams.status"
@@ -58,26 +40,6 @@
             :value="dict.value"
           />
         </el-select>
-      </el-form-item>
-      <el-form-item label="备注" prop="remark">
-        <el-input
-          v-model="queryParams.remark"
-          placeholder="请输入备注"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="创建时间" prop="createTime">
-        <el-date-picker
-          v-model="queryParams.createTime"
-          value-format="YYYY-MM-DD HH:mm:ss"
-          type="daterange"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          :default-time="[new Date('1 00:00:00'), new Date('1 23:59:59')]"
-          class="!w-220px"
-        />
       </el-form-item>
       <el-form-item>
         <el-button @click="handleQuery"><Icon icon="ep:search" class="mr-5px" /> 搜索</el-button>
@@ -105,18 +67,24 @@
 
   <!-- 列表 -->
   <ContentWrap>
-    <el-table v-loading="loading" :data="list" :stripe="true" :show-overflow-tooltip="true">
-      <el-table-column label="分类ID" align="center" prop="id" />
-      <el-table-column label="分类编码" align="center" prop="categoryCode" />
-      <el-table-column label="分类名称" align="center" prop="categoryName" />
-      <el-table-column label="父分类ID" align="center" prop="parentId" />
-      <el-table-column label="显示顺序" align="center" prop="sort" />
-      <el-table-column label="状态" align="center" prop="status">
+    <el-table
+      v-loading="loading"
+      :data="treeList"
+      :stripe="true"
+      :show-overflow-tooltip="true"
+      row-key="id"
+      :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
+    >
+      <el-table-column label="分类ID" align="center" prop="id" width="80" />
+      <el-table-column label="分类编码" align="center" prop="categoryCode" width="120" />
+      <el-table-column label="分类名称" align="left" prop="categoryName" min-width="180" />
+      <el-table-column label="显示顺序" align="center" prop="sort" width="80" />
+      <el-table-column label="状态" align="center" prop="status" width="100">
         <template #default="scope">
           <dict-tag :type="DICT_TYPE.COMMON_STATUS" :value="scope.row.status" />
         </template>
       </el-table-column>
-      <el-table-column label="备注" align="center" prop="remark" />
+      <el-table-column label="备注" align="center" prop="remark" min-width="120" />
       <el-table-column
         label="创建时间"
         align="center"
@@ -124,8 +92,16 @@
         :formatter="dateFormatter"
         width="180px"
       />
-      <el-table-column label="操作" align="center" min-width="120px">
+      <el-table-column label="操作" align="center" min-width="180px">
         <template #default="scope">
+          <el-button
+            link
+            type="primary"
+            @click="openForm('create', 0, scope.row.id)"
+            v-hasPermi="['wms:item-category:create']"
+          >
+            新增子分类
+          </el-button>
           <el-button
             link
             type="primary"
@@ -145,13 +121,6 @@
         </template>
       </el-table-column>
     </el-table>
-    <!-- 分页 -->
-    <Pagination
-      :total="total"
-      v-model:page="queryParams.pageNo"
-      v-model:limit="queryParams.pageSize"
-      @pagination="getList"
-    />
   </ContentWrap>
 
   <!-- 表单弹窗：添加/修改 -->
@@ -161,7 +130,7 @@
 <script setup lang="ts">
 import { dateFormatter } from '@/utils/formatTime'
 import download from '@/utils/download'
-import { ItemCategoryApi, ItemCategoryVO } from '@/api/wms/itemcategory'
+import { ItemCategoryApi, ItemCategoryTreeVO } from '@/api/wms/itemcategory'
 import ItemCategoryForm from './ItemCategoryForm.vue'
 import { DICT_TYPE, getIntDictOptions } from '@/utils/dict'
 import { DictTag } from '@/components/DictTag'
@@ -173,18 +142,11 @@ const message = useMessage() // 消息弹窗
 const { t } = useI18n() // 国际化
 
 const loading = ref(true) // 列表的加载中
-const list = ref<ItemCategoryVO[]>([]) // 列表的数据
-const total = ref(0) // 列表的总页数
+const treeList = ref<ItemCategoryTreeVO[]>([]) // 列表的数据
 const queryParams = reactive({
-  pageNo: 1,
-  pageSize: 10,
   categoryCode: undefined,
   categoryName: undefined,
-  parentId: undefined,
-  sort: undefined,
   status: undefined,
-  remark: undefined,
-  createTime: [],
 })
 const queryFormRef = ref() // 搜索的表单
 const exportLoading = ref(false) // 导出的加载中
@@ -193,9 +155,8 @@ const exportLoading = ref(false) // 导出的加载中
 const getList = async () => {
   loading.value = true
   try {
-    const data = await ItemCategoryApi.getItemCategoryPage(queryParams)
-    list.value = data.list
-    total.value = data.total
+    const data = await ItemCategoryApi.getItemCategoryTree(queryParams)
+    treeList.value = data
   } finally {
     loading.value = false
   }
@@ -203,7 +164,6 @@ const getList = async () => {
 
 /** 搜索按钮操作 */
 const handleQuery = () => {
-  queryParams.pageNo = 1
   getList()
 }
 
@@ -215,8 +175,8 @@ const resetQuery = () => {
 
 /** 添加/修改操作 */
 const formRef = ref()
-const openForm = (type: string, id?: number) => {
-  formRef.value.open(type, id)
+const openForm = (type: string, id?: number, parentId?: number) => {
+  formRef.value.open(type, id, parentId)
 }
 
 /** 删除按钮操作 */

@@ -1,11 +1,12 @@
 package cn.smart.wms.module.wms.service.inventorycheckdetail;
 
-import java.util.*;
-import javax.validation.*;
-import cn.smart.wms.module.wms.controller.admin.inventorycheckdetail.vo.*;
-import cn.smart.wms.module.wms.dal.dataobject.inventorycheckdetail.InventoryCheckDetailDO;
 import cn.smart.wms.framework.common.pojo.PageResult;
-import cn.smart.wms.framework.common.pojo.PageParam;
+import cn.smart.wms.module.wms.controller.admin.inventorycheckdetail.vo.InventoryCheckDetailPageReqVO;
+import cn.smart.wms.module.wms.controller.admin.inventorycheckdetail.vo.InventoryCheckDetailSaveReqVO;
+import cn.smart.wms.module.wms.dal.dataobject.inventorycheckdetail.InventoryCheckDetailDO;
+
+import javax.validation.Valid;
+import java.util.List;
 
 /**
  * 库存盘点明细 Service 接口
@@ -51,5 +52,13 @@ public interface InventoryCheckDetailService {
      * @return 库存盘点明细分页
      */
     PageResult<InventoryCheckDetailDO> getInventoryCheckDetailPage(InventoryCheckDetailPageReqVO pageReqVO);
+
+    /**
+     * 批量插入盘点明细
+     *
+     * @param details 盘点明细列表
+     * @return 插入的数量
+     */
+    int batchInsertInventoryCheckDetail(List<InventoryCheckDetailDO> details);
 
 }

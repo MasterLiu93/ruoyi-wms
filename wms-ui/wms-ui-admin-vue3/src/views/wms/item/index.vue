@@ -26,12 +26,17 @@
           class="!w-240px"
         />
       </el-form-item>
-      <el-form-item label="分类ID" prop="categoryId">
-        <el-input
+      <el-form-item label="物料分类" prop="categoryId">
+        <el-tree-select
           v-model="queryParams.categoryId"
-          placeholder="请输入分类ID"
+          :data="categoryOptions"
+          node-key="id"
+          :props="{ label: 'categoryName', children: 'children' }"
+          placeholder="请选择物料分类"
           clearable
-          @keyup.enter="handleQuery"
+          filterable
+          check-strictly
+          :default-expand-all="false"
           class="!w-240px"
         />
       </el-form-item>
@@ -50,42 +55,6 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="单位" prop="unit">
-        <el-input
-          v-model="queryParams.unit"
-          placeholder="请输入单位"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="规格" prop="spec">
-        <el-input
-          v-model="queryParams.spec"
-          placeholder="请输入规格"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="参考价格" prop="price">
-        <el-input
-          v-model="queryParams.price"
-          placeholder="请输入参考价格"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="安全库存" prop="safetyStock">
-        <el-input
-          v-model="queryParams.safetyStock"
-          placeholder="请输入安全库存"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
       <el-form-item label="状态" prop="status">
         <el-select
           v-model="queryParams.status"
@@ -100,26 +69,6 @@
             :value="dict.value"
           />
         </el-select>
-      </el-form-item>
-      <el-form-item label="备注" prop="remark">
-        <el-input
-          v-model="queryParams.remark"
-          placeholder="请输入备注"
-          clearable
-          @keyup.enter="handleQuery"
-          class="!w-240px"
-        />
-      </el-form-item>
-      <el-form-item label="创建时间" prop="createTime">
-        <el-date-picker
-          v-model="queryParams.createTime"
-          value-format="YYYY-MM-DD HH:mm:ss"
-          type="daterange"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          :default-time="[new Date('1 00:00:00'), new Date('1 23:59:59')]"
-          class="!w-220px"
-        />
       </el-form-item>
       <el-form-item>
         <el-button @click="handleQuery"><Icon icon="ep:search" class="mr-5px" /> 搜索</el-button>
@@ -151,7 +100,11 @@
       <el-table-column label="物料ID" align="center" prop="id" />
       <el-table-column label="物料编码" align="center" prop="itemCode" />
       <el-table-column label="物料名称" align="center" prop="itemName" />
-      <el-table-column label="分类ID" align="center" prop="categoryId" />
+      <el-table-column label="物料分类" align="center">
+        <template #default="scope">
+          {{ categoryMap[scope.row.categoryId] || `未知分类(${scope.row.categoryId})` }}
+        </template>
+      </el-table-column>
       <el-table-column label="物料类型" align="center" prop="itemType">
         <template #default="scope">
           <dict-tag :type="DICT_TYPE.WMS_ITEM_TYPE" :value="scope.row.itemType" />
@@ -212,6 +165,7 @@
 import { dateFormatter } from '@/utils/formatTime'
 import download from '@/utils/download'
 import { ItemApi, ItemVO } from '@/api/wms/item'
+import { ItemCategoryApi, ItemCategoryVO, ItemCategoryTreeVO } from '@/api/wms/itemcategory'
 import ItemForm from './ItemForm.vue'
 import { DICT_TYPE, getIntDictOptions } from '@/utils/dict'
 import DictTag from '@/components/DictTag/src/DictTag.vue'
@@ -224,6 +178,8 @@ const { t } = useI18n() // 国际化
 
 const loading = ref(true) // 列表的加载中
 const list = ref<ItemVO[]>([]) // 列表的数据
+const categoryOptions = ref<any[]>([]) // 分类下拉选项
+const categoryMap = ref<Record<number, string>>({}) // 分类ID到名称的映射
 const total = ref(0) // 列表的总页数
 const queryParams = reactive({
   pageNo: 1,
@@ -247,12 +203,43 @@ const exportLoading = ref(false) // 导出的加载中
 const getList = async () => {
   loading.value = true
   try {
+    await getCategoryOptions() // 先获取分类选项
     const data = await ItemApi.getItemPage(queryParams)
     list.value = data.list
     total.value = data.total
   } finally {
     loading.value = false
   }
+}
+
+/** 获取分类下拉选项 */
+const getCategoryOptions = async () => {
+  try {
+    // 直接获取树形结构数据
+    const data = await ItemCategoryApi.getItemCategoryTree()
+    categoryOptions.value = data
+    
+    // 构建ID到名称的映射
+    buildCategoryMap(data)
+  } catch (error) {
+    console.error('获取分类列表失败', error)
+    categoryOptions.value = []
+  }
+}
+
+/** 构建分类ID到名称的映射 */
+const buildCategoryMap = (treeData: ItemCategoryTreeVO[]) => {
+  // 递归遍历树形结构，构建映射
+  const traverse = (nodes: ItemCategoryTreeVO[]) => {
+    nodes.forEach(item => {
+      categoryMap.value[item.id] = item.categoryName
+      if (item.children && item.children.length > 0) {
+        traverse(item.children)
+      }
+    })
+  }
+  
+  traverse(treeData)
 }
 
 /** 搜索按钮操作 */

@@ -11,11 +11,21 @@ export interface ItemCategoryVO {
   remark: string // 备注
 }
 
+// 物料分类树形 VO
+export interface ItemCategoryTreeVO extends ItemCategoryVO {
+  children?: ItemCategoryTreeVO[] // 子分类
+}
+
 // 物料分类 API
 export const ItemCategoryApi = {
   // 查询物料分类分页
   getItemCategoryPage: async (params: any) => {
     return await request.get({ url: `/wms/item-category/page`, params })
+  },
+
+  // 查询物料分类树形结构
+  getItemCategoryTree: async (params?: any) => {
+    return await request.get({ url: `/wms/item-category/tree`, params })
   },
 
   // 查询物料分类详情
@@ -42,4 +52,4 @@ export const ItemCategoryApi = {
   exportItemCategory: async (params) => {
     return await request.download({ url: `/wms/item-category/export-excel`, params })
   },
-}
+}

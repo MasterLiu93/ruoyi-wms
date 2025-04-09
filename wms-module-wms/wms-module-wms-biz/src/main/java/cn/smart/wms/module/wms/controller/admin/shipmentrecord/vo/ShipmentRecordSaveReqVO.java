@@ -1,9 +1,9 @@
 package cn.smart.wms.module.wms.controller.admin.shipmentrecord.vo;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
-import java.util.*;
-import javax.validation.constraints.*;
+import lombok.Data;
+
+import javax.validation.constraints.NotNull;
 
 @Schema(description = "管理后台 - 出库操作记录新增/修改 Request VO")
 @Data

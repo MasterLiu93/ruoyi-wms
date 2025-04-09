@@ -1,10 +1,9 @@
 package cn.smart.wms.module.wms.dal.dataobject.item;
 
 import lombok.*;
-import java.util.*;
+
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.time.LocalDateTime;
+
 import com.baomidou.mybatisplus.annotation.*;
 import cn.smart.wms.framework.mybatis.core.dataobject.BaseDO;
 

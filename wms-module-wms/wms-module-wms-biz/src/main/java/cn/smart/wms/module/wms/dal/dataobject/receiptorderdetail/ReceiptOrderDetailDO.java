@@ -1,10 +1,9 @@
 package cn.smart.wms.module.wms.dal.dataobject.receiptorderdetail;
 
 import lombok.*;
-import java.util.*;
+
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.time.LocalDateTime;
+
 import com.baomidou.mybatisplus.annotation.*;
 import cn.smart.wms.framework.mybatis.core.dataobject.BaseDO;
 
@@ -37,6 +36,26 @@ public class ReceiptOrderDetailDO extends BaseDO {
      */
     private Long itemId;
     /**
+     * 物料编码
+     */
+    @TableField(exist = false)
+    private String itemCode;
+    /**
+     * 物料名称
+     */
+    @TableField(exist = false)
+    private String itemName;
+    /**
+     * 规格型号
+     */
+    @TableField(exist = false)
+    private String spec;
+    /**
+     * 单位
+     */
+    @TableField(exist = false)
+    private String unit;
+    /**
      * 计划数量
      */
     private Integer planCount;
@@ -45,9 +64,42 @@ public class ReceiptOrderDetailDO extends BaseDO {
      */
     private Integer realCount;
     /**
+     * 仓库ID
+     */
+    @TableField(exist = false)
+    private Long warehouseId;
+    /**
+     * 仓库名称
+     */
+    @TableField(exist = false)
+    private String warehouseName;
+    /**
+     * 货区ID
+     */
+    private Long areaId;
+    /**
+     * 货区名称
+     */
+    @TableField(exist = false)
+    private String areaName;
+    /**
+     * 货架ID
+     */
+    private Long rackId;
+    /**
+     * 货架名称
+     */
+    @TableField(exist = false)
+    private String rackName;
+    /**
      * 入库库位ID
      */
     private Long locationId;
+    /**
+     * 库位名称
+     */
+    @TableField(exist = false)
+    private String locationName;
     /**
      * 批次ID
      */

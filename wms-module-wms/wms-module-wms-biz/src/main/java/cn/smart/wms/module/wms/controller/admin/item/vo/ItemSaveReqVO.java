@@ -1,9 +1,10 @@
 package cn.smart.wms.module.wms.controller.admin.item.vo;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
-import java.util.*;
-import javax.validation.constraints.*;
+import lombok.Data;
+
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 @Schema(description = "管理后台 - 物料新增/修改 Request VO")
@@ -13,8 +14,7 @@ public class ItemSaveReqVO {
     @Schema(description = "物料ID", requiredMode = Schema.RequiredMode.REQUIRED, example = "20482")
     private Long id;
 
-    @Schema(description = "物料编码", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotEmpty(message = "物料编码不能为空")
+    @Schema(description = "物料编码")
     private String itemCode;
 
     @Schema(description = "物料名称", requiredMode = Schema.RequiredMode.REQUIRED, example = "张三")

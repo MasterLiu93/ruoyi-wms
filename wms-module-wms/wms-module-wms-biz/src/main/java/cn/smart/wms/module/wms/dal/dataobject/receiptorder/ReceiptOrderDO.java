@@ -1,12 +1,10 @@
 package cn.smart.wms.module.wms.dal.dataobject.receiptorder;
 
 import lombok.*;
-import java.util.*;
-import java.time.LocalDateTime;
+
 import java.time.LocalDateTime;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.time.LocalDateTime;
+
 import com.baomidou.mybatisplus.annotation.*;
 import cn.smart.wms.framework.mybatis.core.dataobject.BaseDO;
 
@@ -43,6 +41,11 @@ public class ReceiptOrderDO extends BaseDO {
      */
     private Long supplierId;
     /**
+     * 供应商名称
+     */
+    @TableField(exist = false)
+    private String supplierName;
+    /**
      * 仓库ID
      */
     private Long warehouseId;
@@ -62,6 +65,10 @@ public class ReceiptOrderDO extends BaseDO {
      * 实际到货时间
      */
     private LocalDateTime arrivalTime;
+    /**
+     * 完成时间
+     */
+    private LocalDateTime completionTime;
     /**
      * 商品数量
      */
