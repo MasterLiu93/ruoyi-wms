@@ -27,14 +27,20 @@ export interface ShipmentOrderVO {
 export interface ShipmentOrderDetailVO {
   id?: number // 明细ID
   shipmentOrderId?: number // 出库单ID
-  itemId: number // 商品ID
+  warehouseId?: number // 仓库ID
+  areaId?: number // 货区ID
+  rackId?: number // 货架ID
+  itemId: number // 商品ID，原为productId
   itemCode?: string // 商品编码
   itemName: string // 商品名称
   itemType: number // 商品类型
   spec?: string // 规格
   unit?: string // 单位
-  planQuantity: number // 计划数量
-  realQuantity?: number // 实际数量
+  planCount: number // 计划数量，原为planQuantity
+  realCount?: number // 实际数量，原为realQuantity
+  locationId?: number // 出库库位ID
+  batchId?: number // 批次ID
+  price: number // 出库单价，必填字段
   status?: number // 状态
   remark?: string // 备注
 }
@@ -51,7 +57,10 @@ export interface ShipmentOperationReqVO {
   shipmentOrderId: number // 出库单ID
   detailId: number // 明细ID
   quantity: number // 数量
-  locationId: number // 库位ID
+  warehouseId: number // 仓库ID
+  areaId?: number // 货区ID
+  rackId?: number // 货架ID
+  locationId?: number // 库位ID，可选
   remark?: string // 备注
 }
 

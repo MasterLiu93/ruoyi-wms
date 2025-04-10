@@ -129,6 +129,35 @@
           </el-row>
         </el-form>
       
+      <!-- 审核信息部分 -->
+      <el-divider v-if="auditInfo" content-position="left">审核信息</el-divider>
+      <el-row v-if="auditInfo" :gutter="16">
+        <el-col :span="8">
+          <el-form-item label="审核人">
+            {{ auditInfo.auditor }}
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="审核时间">
+            {{ formatDate(auditInfo.auditTime) }}
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="审核状态">
+            <el-tag :type="auditInfo.status === 2 ? 'success' : 'danger'">
+              {{ auditInfo.status === 2 ? '已通过' : '已拒绝' }}
+            </el-tag>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row v-if="auditInfo" :gutter="16">
+        <el-col :span="24">
+          <el-form-item label="审核备注">
+            {{ auditInfo.auditRemark || '无' }}
+          </el-form-item>
+        </el-col>
+      </el-row>
+      
       <!-- 明细信息部分 -->
       <div class="section-header">
         <h3>明细信息</h3>
@@ -343,6 +372,8 @@ import DictTag from '@/components/DictTag/src/DictTag.vue'
 import download from '@/utils/download'
 import request from '@/config/axios'
 import { SupplierApi } from '@/api/wms/supplier'
+import { OrderAuditApi } from '@/api/wms/audit'
+import { OrderTypeEnum } from '@/enums/orderTypeEnum'
 
 import { UploadFilled } from '@element-plus/icons-vue'
 import { ElMessageBox } from 'element-plus'
@@ -416,6 +447,9 @@ const rackOptions = ref<any[]>([])
 const locationOptions = ref<any[]>([])
 // 库位映射
 const locationMap = ref<Record<number, any>>({}) // 改为Record类型而不是数组
+
+// 审核信息
+const auditInfo = ref(null)
 
 /** 获取仓库选项 */
 const getWarehouseOptions = async () => {
@@ -820,7 +854,12 @@ const loadReceiptOrderData = async (id: number) => {
     
     // 加载相关区域、货架和库位数据
     await loadAreaAndLocationData()
-          } catch (error) {
+    
+    // 获取审核信息
+    if (data.orderStatus > 1) { // 如果已审核
+      fetchAuditInfo(id)
+    }
+  } catch (error) {
     console.error('加载入库单数据失败:', error)
     message.error('加载入库单数据失败')
   }
@@ -1499,6 +1538,24 @@ const submitFileUpload = async () => {
       uploadRef.value.clearFiles()
     }
   }
+}
+
+/** 获取审核信息 */
+const fetchAuditInfo = async (id) => {
+  try {
+    const res = await OrderAuditApi.getLatestOrderAudit(id, OrderTypeEnum.RECEIPT)
+    auditInfo.value = res.data
+  } catch (error) {
+    console.error('获取审核信息失败', error)
+  }
+}
+
+/** 格式化日期 */
+const formatDate = (timestamp?: number): string => {
+  if (!timestamp) return '--'
+  
+  const date = new Date(timestamp)
+  return date.toLocaleString()
 }
 </script>
 

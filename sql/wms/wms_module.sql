@@ -1285,3 +1285,31 @@ SET @sql = IF(@s = 0, 'ALTER TABLE `wms_inventory` ADD INDEX `idx_warehouse_item
 PREPARE stmt FROM @sql;
 EXECUTE stmt;
 DEALLOCATE PREPARE stmt;
+
+-- ----------------------------
+-- 订单审核表
+-- ----------------------------
+CREATE TABLE IF NOT EXISTS `wms_order_audit` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '审核记录ID',
+  `order_id` bigint NOT NULL COMMENT '订单ID',
+  `order_type` tinyint NOT NULL COMMENT '订单类型(1-入库单 2-出库单 3-移库单)',
+  `status` tinyint NOT NULL COMMENT '审核状态(1-待审核 2-审核通过 3-审核拒绝)',
+  `auditor` varchar(64) DEFAULT NULL COMMENT '审核人',
+  `audit_time` datetime NOT NULL COMMENT '审核时间',
+  `audit_remark` varchar(512) DEFAULT NULL COMMENT '审核备注',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `creator` varchar(64) DEFAULT '' COMMENT '创建者',
+  `updater` varchar(64) DEFAULT '' COMMENT '更新者',
+  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+  `tenant_id` bigint NOT NULL DEFAULT '0' COMMENT '租户编号',
+  PRIMARY KEY (`id`),
+  KEY `idx_order_id_type` (`order_id`, `order_type`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='订单审核表';
+
+-- 添加审核权限菜单
+INSERT INTO `system_menu` (`name`, `permission`, `type`, `sort`, `parent_id`, `path`, `icon`, `component`, `status`, `visible`, `keep_alive`, `creator`, `create_time`, `updater`, `update_time`, `deleted`)
+VALUES ('订单审核', 'wms:order-audit:query', 3, 10, @receiptOrderId, '', '', '', 0, b'1', b'1', 'admin', now(), 'admin', now(), b'0');
+
+INSERT INTO `system_menu` (`name`, `permission`, `type`, `sort`, `parent_id`, `path`, `icon`, `component`, `status`, `visible`, `keep_alive`, `creator`, `create_time`, `updater`, `update_time`, `deleted`)
+VALUES ('订单审核', 'wms:order-audit:query', 3, 10, @shipmentOrderId, '', '', '', 0, b'1', b'1', 'admin', now(), 'admin', now(), b'0');

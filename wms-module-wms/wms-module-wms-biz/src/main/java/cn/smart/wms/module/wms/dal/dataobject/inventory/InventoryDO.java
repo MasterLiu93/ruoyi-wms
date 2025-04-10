@@ -43,6 +43,16 @@ public class InventoryDO extends BaseDO {
     @TableField(exist = false)
     private String locationName;
     /**
+     * 货区ID
+     */
+    @TableField(exist = false)
+    private Long areaId;
+    /**
+     * 货架ID
+     */
+    @TableField(exist = false)
+    private Long rackId;
+    /**
      * 物料ID
      */
     private Long itemId;

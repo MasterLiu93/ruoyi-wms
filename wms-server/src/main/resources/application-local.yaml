@@ -178,7 +178,7 @@ logging:
     cn.smart.wms.module.ai.dal.mysql: debug
     org.springframework.context.support.PostProcessorRegistrationDelegate: ERROR # TODO 芋艿：先禁用，Spring Boot 3.X 存在部分错误的 WARN 提示
 
-debug: false
+debug: true
 
 --- #################### 微信公众号、小程序相关配置 ####################
 wx:

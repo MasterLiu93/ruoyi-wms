@@ -149,12 +149,12 @@
           </template>
         </el-table-column>
         <el-table-column label="库存数量" prop="stockCount" width="100" align="right" />
-        <el-table-column label="计划数量" prop="planQuantity" width="150" align="right">
+        <el-table-column label="计划数量" prop="planCount" width="150" align="right">
           <template #default="scope">
             <el-input-number 
-              v-model="scope.row.planQuantity" 
+              v-model="scope.row.planCount" 
               :min="0" 
-              :max="scope.row.stockCount" 
+              :max="scope.row.stockCount || 0" 
               :precision="2" 
               :step="1" 
               :disabled="isView"
@@ -164,9 +164,21 @@
             />
           </template>
         </el-table-column>
-        <el-table-column label="实际数量" prop="realQuantity" width="120" align="right">
+        <el-table-column label="实际数量" prop="realCount" width="150" align="right">
           <template #default="scope">
-            <span>{{ scope.row.realQuantity || 0 }}</span>
+            <el-input-number 
+              v-if="!isView"
+              v-model="scope.row.realCount" 
+              :min="0" 
+              :max="scope.row.planCount"
+              :precision="2" 
+              :step="1"
+              controls-position="right"
+              style="width: 100%"
+              @change="calculateTotals"
+            />
+            <span v-else>{{ scope.row.realCount || 0 }}</span>
+            <div v-if="!isView" class="text-xs text-gray-400">不能超过计划数量</div>
           </template>
         </el-table-column>
         <el-table-column label="状态" prop="status" width="100" align="center">
@@ -184,9 +196,17 @@
             />
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="80" fixed="right" align="center" v-if="!isView">
+        <el-table-column label="操作" width="120" fixed="right" align="center">
           <template #default="scope">
-            <el-button type="danger" link @click="handleDeleteDetail(scope.$index)">
+            <el-button 
+              v-if="!isView && scope.row.status !== 2" 
+              type="primary" 
+              link 
+              @click="handleExecuteShipment(scope.row, scope.$index)"
+            >
+              出库
+            </el-button>
+            <el-button v-if="!isView" type="danger" link @click="handleDeleteDetail(scope.$index)">
               <el-icon><Delete /></el-icon>
             </el-button>
           </template>
@@ -200,6 +220,14 @@
         <el-button @click="dialogVisible = false">关 闭</el-button>
         <el-button v-if="!isView" type="primary" @click="handleSaveDraft" :loading="formLoading">保存草稿</el-button>
         <el-button v-if="!isView" type="success" @click="handleSubmitShipment" :loading="formLoading">提交出库</el-button>
+        <el-button 
+          v-if="!isView && formData.orderStatus === 2 && formData.shipmentStatus !== 2" 
+          type="warning" 
+          @click="handleCompleteShipment" 
+          :loading="formLoading"
+        >
+          完成出库
+        </el-button>
       </div>
     </template>
     
@@ -251,7 +279,7 @@
             <dict-tag :type="DICT_TYPE.WMS_ITEM_TYPE" :value="scope.row.itemType" />
           </template>
         </el-table-column>
-        <el-table-column prop="stockCount" label="可用库存" width="100" align="right" />
+        <el-table-column prop="availableCount" label="可用库存" width="100" align="right" />
         <el-table-column prop="price" label="参考价格" width="100" align="right">
           <template #default="scope">
             {{ scope.row.price ? `￥${scope.row.price}` : '-' }}
@@ -271,7 +299,7 @@
 
 <script setup lang="ts">
 import { computed, ref, reactive, onMounted, watch, nextTick } from 'vue'
-import { ShipmentOrderApi, ShipmentOrderVO, ShipmentOrderDetailVO } from '@/api/wms/shipmentorder'
+import { ShipmentOrderApi, ShipmentOrderVO, ShipmentOrderDetailVO, ShipmentOperationReqVO } from '@/api/wms/shipmentorder'
 import { DICT_TYPE, getIntDictOptions } from '@/utils/dict'
 import { DictTag } from '@/components/DictTag'
 import { Plus, Delete } from '@element-plus/icons-vue'
@@ -281,6 +309,7 @@ import { useMessage } from '@/hooks/web/useMessage'
 import { CustomerApi } from '@/api/wms/customer'
 import { WarehouseApi } from '@/api/wms/warehouse'
 import { ItemStockApi } from '@/api/wms/itemstock'
+import request from '@/config/axios'
 
 /** 出库单 表单 */
 defineOptions({ name: 'ShipmentOrderForm' })
@@ -306,7 +335,7 @@ const selectedInventory = ref<any[]>([])
 const inventoryLoading = ref(false)
 const inventorySearch = reactive({
   itemName: '',
-  itemType: undefined
+  itemType: 0
 })
 
 // 添加 detailLoading 变量
@@ -321,18 +350,18 @@ interface FormDataType extends Omit<ShipmentOrderVO, 'totalCount' | 'totalAmount
 
 // 表单数据
 const formData = ref<FormDataType>({
-  id: undefined,
+  id: 0,
   shipmentOrderNo: '',
-  shipmentType: 0, // 设置默认值为0而不是undefined
-  customerId: undefined,
-  warehouseId: undefined,
+  shipmentType: 0, 
+  customerId: 0,
+  warehouseId: 0,
   orderStatus: 0,
   shipmentStatus: 0,
-  expectTime: undefined,
-  completeTime: undefined,
+  expectTime: 0,
+  completeTime: 0,
   totalCount: 0,
   totalAmount: 0,
-  remark: undefined,
+  remark: '',
   details: []
 })
 
@@ -380,7 +409,8 @@ const loadInventoryList = async () => {
     const res = await ItemStockApi.getItemStockPage({
       pageNo: 1,
       pageSize: 100,
-      warehouseId: formData.value.warehouseId
+      warehouseId: formData.value.warehouseId,
+      includeLocationInfo: true // 请求包含库位详细信息
     })
     inventoryList.value = res?.list || []
   } catch (error) {
@@ -403,19 +433,19 @@ const filteredInventoryList = computed(() => {
     )
   }
   
-  // 按物料类型过滤
-  if (inventorySearch.itemType !== undefined && inventorySearch.itemType !== null) {
+  // 按物料类型过滤 - 仅当itemType不为0时过滤
+  if (inventorySearch.itemType !== 0) {
     result = result.filter(item => item.itemType === inventorySearch.itemType)
   }
   
   // 过滤掉已经添加的物料
-  const existingItemIds = formData.value.details?.map(detail => detail.productId) || []
+  const existingItemIds = formData.value.details?.map(detail => detail.itemId) || []
   if (existingItemIds.length > 0) {
     result = result.filter(item => !existingItemIds.includes(item.itemId))
   }
   
   // 过滤掉库存为0的物料
-  result = result.filter(item => item.stockCount > 0)
+  result = result.filter(item => item.availableCount > 0)
   
   return result
 })
@@ -423,7 +453,7 @@ const filteredInventoryList = computed(() => {
 // 重置库存搜索条件
 const resetInventorySearch = () => {
   inventorySearch.itemName = ''
-  inventorySearch.itemType = undefined
+  inventorySearch.itemType = 0
   loadInventoryList()
 }
 
@@ -476,21 +506,26 @@ const handleAddSelectedInventory = () => {
   
   // 将选中的库存项转换为出库单明细
   const newDetails: ShipmentOrderDetailVO[] = selectedInventory.value.map(item => ({
-    id: undefined,
-    shipmentOrderId: formData.value.id,
-    productId: item.itemId,
-    itemCode: item.itemCode,
-    itemName: item.itemName,
-    itemType: item.itemType,
-    spec: item.spec,
-    unit: item.unit,
-    productType: item.itemType,
-    stockCount: item.stockCount,
-    planQuantity: 0,
-    realQuantity: 0,
-    status: 0, // 待出库
-    remark: undefined
-  } as unknown as ShipmentOrderDetailVO))
+    id: 0,
+    shipmentOrderId: formData.value.id || 0,
+    warehouseId: formData.value.warehouseId, // 设置仓库ID
+    areaId: item.areaId || null, // 设置货区ID
+    rackId: item.rackId || null, // 设置货架ID
+    itemId: item.itemId,
+    itemCode: item.itemCode || '',
+    itemName: item.itemName || '',
+    itemType: item.itemType || 0,
+    spec: item.spec || '',
+    unit: item.unit || '',
+    planCount: 0,
+    realCount: 0,
+    locationId: item.locationId || 0, // 设置库位ID
+    batchId: 0,
+    price: item.price || 0,
+    status: 0,
+    stockCount: item.availableCount || 0,
+    remark: ''
+  } as ShipmentOrderDetailVO))
   
   // 添加到表单明细中
   if (!formData.value.details) {
@@ -576,9 +611,19 @@ const handleSaveDraft = async () => {
   }
   
   // 校验明细数量
-  const invalidDetail = formData.value.details.find(detail => !detail.planQuantity || detail.planQuantity <= 0)
+  const invalidDetail = formData.value.details.find(detail => !detail.planCount || detail.planCount <= 0)
   if (invalidDetail) {
     message.error('出库单明细的计划数量必须大于0')
+    return
+  }
+  
+  // 确认实际数量不超过计划数量
+  const invalidRealCount = formData.value.details.find(detail => 
+    detail.realCount !== undefined && 
+    detail.realCount > detail.planCount
+  )
+  if (invalidRealCount) {
+    message.error('出库单明细的实际数量不能超过计划数量')
     return
   }
   
@@ -588,7 +633,7 @@ const handleSaveDraft = async () => {
   try {
     formLoading.value = true
     // 计算总数量
-    const totalCount = formData.value.details.reduce((sum, detail) => sum + (detail.planQuantity || 0), 0)
+    const totalCount = formData.value.details.reduce((sum, detail) => sum + (detail.planCount || 0), 0)
     const data = {
       ...formData.value,
       totalCount,
@@ -628,9 +673,19 @@ const handleSubmitShipment = async () => {
   }
   
   // 校验明细数量
-  const invalidDetail = formData.value.details.find(detail => !detail.planQuantity || detail.planQuantity <= 0)
+  const invalidDetail = formData.value.details.find(detail => !detail.planCount || detail.planCount <= 0)
   if (invalidDetail) {
     message.error('出库单明细的计划数量必须大于0')
+    return
+  }
+  
+  // 确认实际数量不超过计划数量
+  const invalidRealCount = formData.value.details.find(detail => 
+    detail.realCount !== undefined && 
+    detail.realCount > detail.planCount
+  )
+  if (invalidRealCount) {
+    message.error('出库单明细的实际数量不能超过计划数量')
     return
   }
   
@@ -639,8 +694,8 @@ const handleSubmitShipment = async () => {
   
   try {
     formLoading.value = true
-    // 计算总数量
-    const totalCount = formData.value.details.reduce((sum, detail) => sum + (detail.planQuantity || 0), 0)
+    // 计算总数量（计划数量）
+    const totalCount = formData.value.details.reduce((sum, detail) => sum + (detail.planCount || 0), 0)
     const data = {
       ...formData.value,
       totalCount,
@@ -676,7 +731,29 @@ const handleDeleteDetail = (index: number) => {
 
 /** 计算总计 */
 const calculateTotals = () => {
-  // 不再需要计算总计
+  if (!formData.value.details || formData.value.details.length === 0) {
+    formData.value.totalCount = 0
+    return
+  }
+  
+  // 计算计划总数量
+  formData.value.totalCount = formData.value.details.reduce(
+    (sum, detail) => sum + (detail.planCount || 0), 
+    0
+  )
+  
+  // 如果需要，也可以计算实际总数量和总金额
+  // 目前仅作为前端显示，不影响提交的数据
+  const totalRealCount = formData.value.details.reduce(
+    (sum, detail) => sum + (detail.realCount || 0), 
+    0
+  )
+  
+  // 计算总金额
+  formData.value.totalAmount = formData.value.details.reduce(
+    (sum, detail) => sum + ((detail.realCount || detail.planCount || 0) * (detail.price || 0)), 
+    0
+  )
 }
 
 /** 格式化金额 */
@@ -687,18 +764,18 @@ const formatAmount = (amount: number) => {
 /** 重置表单 */
 const resetForm = () => {
   formData.value = {
-    id: undefined,
+    id: 0,
     shipmentOrderNo: '',
     shipmentType: 0,
-    customerId: undefined,
-    warehouseId: undefined,
+    customerId: 0,
+    warehouseId: 0,
     orderStatus: 0,
     shipmentStatus: 0,
-    expectTime: undefined,
-    completeTime: undefined,
+    expectTime: 0,
+    completeTime: 0,
     totalCount: 0,
     totalAmount: 0,
-    remark: undefined,
+    remark: '',
     details: []
   }
   formRef.value?.resetFields()
@@ -713,6 +790,199 @@ watch(() => formData.value.details, () => {
 onMounted(() => {
   // 在组件初始化时不必加载基础数据，打开弹窗时会加载
 })
+
+// 执行出库操作
+const handleExecuteShipment = async (detail: ShipmentOrderDetailVO, index: number) => {
+  // 确保仓库ID存在
+  if (!formData.value.warehouseId) {
+    message.warning('请先选择仓库')
+    return
+  }
+  
+  // 计算可出库数量（计划数量减去已出库数量）
+  const availableCount = detail.planCount - (detail.realCount || 0)
+  if (availableCount <= 0) {
+    message.warning('已达到计划出库数量，无法继续出库')
+    return
+  }
+  
+  // 弹出输入框，输入本次出库数量
+  try {
+    const { value: quantity } = await ElMessageBox.prompt(
+      '请输入本次出库数量',
+      '执行出库操作', 
+      {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        inputType: 'number',
+        inputValue: availableCount.toString(), // 转换为字符串类型
+        inputValidator: (val) => {
+          const num = Number(val)
+          return (num > 0 && num <= availableCount) || '出库数量必须大于0且不能超过可出库数量'
+        },
+        inputPlaceholder: `可出库数量: ${availableCount}`
+      }
+    )
+    
+    if (!quantity) return
+    
+    // 执行出库操作
+    const shipmentData: ShipmentOperationReqVO = {
+      shipmentOrderId: formData.value.id || 0,
+      detailId: detail.id || 0,
+      quantity: Number(quantity),
+      warehouseId: formData.value.warehouseId, // 传递仓库ID
+      remark: detail.remark || ''
+    };
+    
+    // 如果用户选择了库位，则添加相关信息
+    if (detail.locationId) {
+      shipmentData.locationId = detail.locationId;
+      
+      // 如果有库位信息，尝试获取货区和货架ID
+      try {
+        const locationInfo = await getLocationInfo(detail.locationId);
+        if (locationInfo) {
+          shipmentData.areaId = locationInfo.areaId;
+          shipmentData.rackId = locationInfo.rackId;
+        }
+      } catch (error) {
+        console.error('获取库位信息失败', error);
+        // 继续执行出库操作，后端会处理
+      }
+    } else {
+      // 没有选择库位时，后端将自动选择最早入库的库位
+      console.log('未指定库位，后端将自动选择最早入库的库位');
+    }
+    
+    formLoading.value = true
+    try {
+      await ShipmentOrderApi.executeShipment(shipmentData)
+      
+      // 更新本地数据
+      detail.realCount = (detail.realCount || 0) + Number(quantity)
+      
+      // 更新明细状态
+      if (detail.realCount >= detail.planCount) {
+        detail.status = 2 // 已出库
+      } else if (detail.realCount > 0) {
+        detail.status = 1 // 部分出库
+      }
+      
+      // 更新整个出库单状态
+      updateOrderShipmentStatus()
+      
+      // 刷新数据
+      calculateTotals()
+      
+      message.success('出库操作成功')
+    } catch (error: any) {
+      message.error('出库操作失败：' + (error.message || '未知错误'))
+    } finally {
+      formLoading.value = false
+    }
+  } catch (e) {
+    // 用户取消操作
+  }
+}
+
+// 根据库位ID获取库位完整信息
+const getLocationInfo = async (locationId: number) => {
+  if (!locationId) return null;
+  
+  try {
+    // 调用库位服务获取完整信息
+    const response = await request.get({ 
+      url: `/wms/location/get?id=${locationId}` 
+    });
+    
+    if (response && response.data) {
+      return {
+        warehouseId: response.data.warehouseId,
+        areaId: response.data.areaId,
+        rackId: response.data.rackId
+      };
+    }
+    return null;
+  } catch (error) {
+    console.error('获取库位信息失败', error);
+    return null;
+  }
+}
+
+// 更新出库单出库状态
+const updateOrderShipmentStatus = () => {
+  if (!formData.value.details || formData.value.details.length === 0) {
+    return
+  }
+  
+  // 检查是否所有明细都已完成出库
+  const allCompleted = formData.value.details.every(detail => detail.status === 2)
+  if (allCompleted) {
+    formData.value.shipmentStatus = 2 // 已完成
+    return
+  }
+  
+  // 检查是否有部分出库
+  const hasPartial = formData.value.details.some(detail => detail.status === 1 || detail.status === 2)
+  if (hasPartial) {
+    formData.value.shipmentStatus = 1 // 部分出库
+    return
+  }
+  
+  // 默认为待出库
+  formData.value.shipmentStatus = 0
+}
+
+// 完成出库
+const handleCompleteShipment = async () => {
+  if (!formData.value.id) {
+    message.warning('出库单ID不能为空')
+    return
+  }
+  
+  try {
+    await ElMessageBox.confirm(
+      '确认标记此出库单为已完成状态吗？此操作将无法撤销。',
+      '完成出库单',
+      {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }
+    )
+    
+    formLoading.value = true
+    try {
+      await ShipmentOrderApi.completeShipmentOrder(formData.value.id)
+      
+      // 更新本地状态
+      formData.value.shipmentStatus = 2 // 已完成
+      formData.value.completeTime = Date.now() // 更新完成时间为当前时间
+      
+      // 更新所有明细状态为已出库
+      if (formData.value.details) {
+        formData.value.details.forEach(detail => {
+          detail.status = 2 // 已出库
+          // 如果实际数量为0，则设置为与计划数量相等
+          if (!detail.realCount) {
+            detail.realCount = detail.planCount
+          }
+        })
+      }
+      
+      message.success('出库单已完成')
+      dialogVisible.value = false
+      emit('success')
+    } catch (error: any) {
+      message.error('完成出库单失败：' + (error.message || '未知错误'))
+    } finally {
+      formLoading.value = false
+    }
+  } catch (e) {
+    // 用户取消操作
+  }
+}
 </script>
 
 <style scoped>

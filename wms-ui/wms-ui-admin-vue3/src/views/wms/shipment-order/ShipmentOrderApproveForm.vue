@@ -75,11 +75,11 @@ const submitForm = async () => {
   // 提交请求
   formLoading.value = true
   try {
-    await ShipmentOrderApi.approveShipmentOrder({
-      id: shipmentOrderId.value,
-      approveResult: formData.value.approveResult,
-      remark: formData.value.remark
-    })
+    await ShipmentOrderApi.approveShipmentOrder(
+      shipmentOrderId.value,
+      formData.value.approveResult,
+      formData.value.remark
+    )
     
     message.success(formData.value.approveResult ? '出库单审核通过' : '出库单已驳回')
     dialogVisible.value = false

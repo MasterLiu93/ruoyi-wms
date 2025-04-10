@@ -1,4 +1,10 @@
-# 🏷️ WMS批次管理模块设计文档
+---
+id: wms_batch_module
+title: WMS批次管理模块设计文档
+sidebar_label: 批次管理模块
+---
+
+# 🏷️ WMS 批次管理模块设计文档
 
 ![批次管理流程](https://mermaid.ink/img/pako:eNp1ktFOwzAMRX8l8tMkpG5r6R6QJjqmIVUavBReItdZG6ila5OqTBPi37FOGCAG8hL7-NrXduIKNUPC8r1NxPX4I9ft4SVj7WHM-KSZ1fco6KxFxKQFV2g5O8pjK3oFUkppSh_mTFiWE5do7ymBJ26WT-wxCIJm8mb_LyqWy22StGFaMtNJcU-I0hJCkihGg4gISbfTWQhf3l-_0Tgetu394at-Z-KQIPphpLvhHRYeGZcc5GhORNeHtN3Mos1CgDy59mDZP055vIEhCitwWLOI97aLxjBveS-Vwu-982HnEjKGvtxeUbgllFpdr7zRBeSmsKTRbpDwjurvUfJyx8z5PJ0Go4sMRV9sWZrk4QuvYw2u69pl1z_GI5KZ?type=png)
 
@@ -14,7 +20,7 @@
 
 ## 🎯 模块概述
 
-批次管理模块是WMS系统中负责管理物料批次信息的功能模块，用于追踪和管理同一物料不同批次的库存情况。通过批次管理，可以实现物料的先进先出、保质期管理、批次追溯等功能，满足食品、医药等行业对批次管理的高要求。
+批次管理模块是 WMS 系统中负责管理物料批次信息的功能模块，用于追踪和管理同一物料不同批次的库存情况。通过批次管理，可以实现物料的先进先出、保质期管理、批次追溯等功能，满足食品、医药等行业对批次管理的高要求。
 
 ### 核心功能
 
@@ -111,95 +117,95 @@
 
 ### 1. 批次信息表(wms_batch)
 
-| 字段名 | 数据类型 | 是否必填 | 描述 |
-|-------|---------|---------|------|
-| id | bigint(20) | 是 | 主键ID |
-| batch_code | varchar(64) | 是 | 批次号 |
-| item_id | bigint(20) | 是 | 物料ID |
-| item_code | varchar(64) | 是 | 物料编码 |
-| item_name | varchar(255) | 是 | 物料名称 |
-| production_date | date | 否 | 生产日期 |
-| shelf_life | int(11) | 否 | 保质期(天) |
-| expiry_date | date | 否 | 有效期 |
-| supplier_id | bigint(20) | 否 | 供应商ID |
-| supplier_name | varchar(255) | 否 | 供应商名称 |
-| supplier_batch | varchar(64) | 否 | 供应商批次号 |
-| status | tinyint(4) | 是 | 批次状态 |
-| quality_status | tinyint(4) | 是 | 质量状态 |
-| total_count | int(11) | 是 | 总数量 |
-| available_count | int(11) | 是 | 可用数量 |
-| locked_count | int(11) | 是 | 锁定数量 |
-| remark | varchar(512) | 否 | 备注 |
-| creator | varchar(64) | 是 | 创建人 |
-| create_time | datetime | 是 | 创建时间 |
-| updater | varchar(64) | 是 | 更新人 |
-| update_time | datetime | 是 | 更新时间 |
-| deleted | bit(1) | 是 | 是否删除 |
-| tenant_id | bigint(20) | 是 | 租户编号 |
+| 字段名          | 数据类型     | 是否必填 | 描述         |
+| --------------- | ------------ | -------- | ------------ |
+| id              | bigint(20)   | 是       | 主键 ID      |
+| batch_code      | varchar(64)  | 是       | 批次号       |
+| item_id         | bigint(20)   | 是       | 物料 ID      |
+| item_code       | varchar(64)  | 是       | 物料编码     |
+| item_name       | varchar(255) | 是       | 物料名称     |
+| production_date | date         | 否       | 生产日期     |
+| shelf_life      | int(11)      | 否       | 保质期(天)   |
+| expiry_date     | date         | 否       | 有效期       |
+| supplier_id     | bigint(20)   | 否       | 供应商 ID    |
+| supplier_name   | varchar(255) | 否       | 供应商名称   |
+| supplier_batch  | varchar(64)  | 否       | 供应商批次号 |
+| status          | tinyint(4)   | 是       | 批次状态     |
+| quality_status  | tinyint(4)   | 是       | 质量状态     |
+| total_count     | int(11)      | 是       | 总数量       |
+| available_count | int(11)      | 是       | 可用数量     |
+| locked_count    | int(11)      | 是       | 锁定数量     |
+| remark          | varchar(512) | 否       | 备注         |
+| creator         | varchar(64)  | 是       | 创建人       |
+| create_time     | datetime     | 是       | 创建时间     |
+| updater         | varchar(64)  | 是       | 更新人       |
+| update_time     | datetime     | 是       | 更新时间     |
+| deleted         | bit(1)       | 是       | 是否删除     |
+| tenant_id       | bigint(20)   | 是       | 租户编号     |
 
 ### 2. 批次库存表(wms_batch_inventory)
 
-| 字段名 | 数据类型 | 是否必填 | 描述 |
-|-------|---------|---------|------|
-| id | bigint(20) | 是 | 主键ID |
-| batch_id | bigint(20) | 是 | 批次ID |
-| batch_code | varchar(64) | 是 | 批次号 |
-| inventory_id | bigint(20) | 是 | 库存ID |
-| warehouse_id | bigint(20) | 是 | 仓库ID |
-| warehouse_name | varchar(255) | 是 | 仓库名称 |
-| area_id | bigint(20) | 否 | 货区ID |
-| area_name | varchar(255) | 否 | 货区名称 |
-| rack_id | bigint(20) | 否 | 货架ID |
-| rack_name | varchar(255) | 否 | 货架名称 |
-| location_id | bigint(20) | 否 | 库位ID |
-| location_name | varchar(255) | 否 | 库位名称 |
-| item_id | bigint(20) | 是 | 物料ID |
-| item_code | varchar(64) | 是 | 物料编码 |
-| item_name | varchar(255) | 是 | 物料名称 |
-| stock_count | int(11) | 是 | 库存总量 |
-| available_count | int(11) | 是 | 可用数量 |
-| locked_count | int(11) | 是 | 锁定数量 |
-| status | tinyint(4) | 是 | 状态 |
-| remark | varchar(512) | 否 | 备注 |
-| creator | varchar(64) | 是 | 创建人 |
-| create_time | datetime | 是 | 创建时间 |
-| updater | varchar(64) | 是 | 更新人 |
-| update_time | datetime | 是 | 更新时间 |
-| deleted | bit(1) | 是 | 是否删除 |
-| tenant_id | bigint(20) | 是 | 租户编号 |
+| 字段名          | 数据类型     | 是否必填 | 描述     |
+| --------------- | ------------ | -------- | -------- |
+| id              | bigint(20)   | 是       | 主键 ID  |
+| batch_id        | bigint(20)   | 是       | 批次 ID  |
+| batch_code      | varchar(64)  | 是       | 批次号   |
+| inventory_id    | bigint(20)   | 是       | 库存 ID  |
+| warehouse_id    | bigint(20)   | 是       | 仓库 ID  |
+| warehouse_name  | varchar(255) | 是       | 仓库名称 |
+| area_id         | bigint(20)   | 否       | 货区 ID  |
+| area_name       | varchar(255) | 否       | 货区名称 |
+| rack_id         | bigint(20)   | 否       | 货架 ID  |
+| rack_name       | varchar(255) | 否       | 货架名称 |
+| location_id     | bigint(20)   | 否       | 库位 ID  |
+| location_name   | varchar(255) | 否       | 库位名称 |
+| item_id         | bigint(20)   | 是       | 物料 ID  |
+| item_code       | varchar(64)  | 是       | 物料编码 |
+| item_name       | varchar(255) | 是       | 物料名称 |
+| stock_count     | int(11)      | 是       | 库存总量 |
+| available_count | int(11)      | 是       | 可用数量 |
+| locked_count    | int(11)      | 是       | 锁定数量 |
+| status          | tinyint(4)   | 是       | 状态     |
+| remark          | varchar(512) | 否       | 备注     |
+| creator         | varchar(64)  | 是       | 创建人   |
+| create_time     | datetime     | 是       | 创建时间 |
+| updater         | varchar(64)  | 是       | 更新人   |
+| update_time     | datetime     | 是       | 更新时间 |
+| deleted         | bit(1)       | 是       | 是否删除 |
+| tenant_id       | bigint(20)   | 是       | 租户编号 |
 
 ### 3. 批次操作记录表(wms_batch_record)
 
-| 字段名 | 数据类型 | 是否必填 | 描述 |
-|-------|---------|---------|------|
-| id | bigint(20) | 是 | 主键ID |
-| batch_id | bigint(20) | 是 | 批次ID |
-| batch_code | varchar(64) | 是 | 批次号 |
-| operation_type | tinyint(4) | 是 | 操作类型 |
-| order_id | bigint(20) | 否 | 关联单据ID |
-| order_no | varchar(64) | 否 | 关联单据编号 |
-| order_detail_id | bigint(20) | 否 | 关联单据明细ID |
-| warehouse_id | bigint(20) | 是 | 仓库ID |
-| warehouse_name | varchar(255) | 是 | 仓库名称 |
-| location_id | bigint(20) | 否 | 库位ID |
-| location_name | varchar(255) | 否 | 库位名称 |
-| item_id | bigint(20) | 是 | 物料ID |
-| item_code | varchar(64) | 是 | 物料编码 |
-| item_name | varchar(255) | 是 | 物料名称 |
-| count | int(11) | 是 | 操作数量 |
-| before_status | tinyint(4) | 否 | 操作前状态 |
-| after_status | tinyint(4) | 否 | 操作后状态 |
-| before_count | int(11) | 否 | 操作前数量 |
-| after_count | int(11) | 否 | 操作后数量 |
-| operation_time | datetime | 是 | 操作时间 |
-| operator | varchar(64) | 是 | 操作人 |
-| remark | varchar(512) | 否 | 备注 |
-| creator | varchar(64) | 是 | 创建人 |
-| create_time | datetime | 是 | 创建时间 |
-| updater | varchar(64) | 是 | 更新人 |
-| update_time | datetime | 是 | 更新时间 |
-| deleted | bit(1) | 是 | 是否删除 |
-| tenant_id | bigint(20) | 是 | 租户编号 |
+| 字段名          | 数据类型     | 是否必填 | 描述            |
+| --------------- | ------------ | -------- | --------------- |
+| id              | bigint(20)   | 是       | 主键 ID         |
+| batch_id        | bigint(20)   | 是       | 批次 ID         |
+| batch_code      | varchar(64)  | 是       | 批次号          |
+| operation_type  | tinyint(4)   | 是       | 操作类型        |
+| order_id        | bigint(20)   | 否       | 关联单据 ID     |
+| order_no        | varchar(64)  | 否       | 关联单据编号    |
+| order_detail_id | bigint(20)   | 否       | 关联单据明细 ID |
+| warehouse_id    | bigint(20)   | 是       | 仓库 ID         |
+| warehouse_name  | varchar(255) | 是       | 仓库名称        |
+| location_id     | bigint(20)   | 否       | 库位 ID         |
+| location_name   | varchar(255) | 否       | 库位名称        |
+| item_id         | bigint(20)   | 是       | 物料 ID         |
+| item_code       | varchar(64)  | 是       | 物料编码        |
+| item_name       | varchar(255) | 是       | 物料名称        |
+| count           | int(11)      | 是       | 操作数量        |
+| before_status   | tinyint(4)   | 否       | 操作前状态      |
+| after_status    | tinyint(4)   | 否       | 操作后状态      |
+| before_count    | int(11)      | 否       | 操作前数量      |
+| after_count     | int(11)      | 否       | 操作后数量      |
+| operation_time  | datetime     | 是       | 操作时间        |
+| operator        | varchar(64)  | 是       | 操作人          |
+| remark          | varchar(512) | 否       | 备注            |
+| creator         | varchar(64)  | 是       | 创建人          |
+| create_time     | datetime     | 是       | 创建时间        |
+| updater         | varchar(64)  | 是       | 更新人          |
+| update_time     | datetime     | 是       | 更新时间        |
+| deleted         | bit(1)       | 是       | 是否删除        |
+| tenant_id       | bigint(20)   | 是       | 租户编号        |
 
 ## 🔄 业务流程
 
@@ -326,7 +332,7 @@ stateDiagram-v2
 - **接口路径**: `/wms/batch/get`
 - **请求方式**: GET
 - **请求参数**:
-  - id: 批次ID（必填）
+  - id: 批次 ID（必填）
 - **响应结果**: 返回批次详情
 
 #### 创建批次
@@ -351,14 +357,14 @@ stateDiagram-v2
     "remark": "新批次"
   }
   ```
-- **响应结果**: 创建成功返回批次ID
+- **响应结果**: 创建成功返回批次 ID
 
 #### 更新批次
 
 - **接口路径**: `/wms/batch/update`
 - **请求方式**: PUT
-- **请求参数**: 与创建批次类似，增加id字段
-- **响应结果**: 更新成功返回true
+- **请求参数**: 与创建批次类似，增加 id 字段
+- **响应结果**: 更新成功返回 true
 
 #### 更新批次状态
 
@@ -372,7 +378,7 @@ stateDiagram-v2
     "remark": "质量问题，批次冻结"
   }
   ```
-- **响应结果**: 更新成功返回true
+- **响应结果**: 更新成功返回 true
 
 ### 2. 批次库存管理接口
 
@@ -383,8 +389,8 @@ stateDiagram-v2
 - **请求参数**:
   - batchCode: 批次号（可选）
   - itemCode: 物料编码（可选）
-  - warehouseId: 仓库ID（可选）
-  - locationId: 库位ID（可选）
+  - warehouseId: 仓库 ID（可选）
+  - locationId: 库位 ID（可选）
   - pageNo: 页码（必填）
   - pageSize: 每页记录数（必填）
 - **响应结果**: 分页返回批次库存列表
@@ -394,7 +400,7 @@ stateDiagram-v2
 - **接口路径**: `/wms/batch-inventory/get`
 - **请求方式**: GET
 - **请求参数**:
-  - id: 批次库存ID（必填）
+  - id: 批次库存 ID（必填）
 - **响应结果**: 返回批次库存详情
 
 ### 3. 批次追溯接口
@@ -428,8 +434,8 @@ stateDiagram-v2
 - **接口路径**: `/wms/batch/expiry-warning`
 - **请求方式**: GET
 - **请求参数**:
-  - warningDays: 预警天数（可选，默认30天）
-  - warehouseId: 仓库ID（可选）
+  - warningDays: 预警天数（可选，默认 30 天）
+  - warehouseId: 仓库 ID（可选）
   - pageNo: 页码（必填）
   - pageSize: 每页记录数（必填）
 - **响应结果**: 分页返回即将过期的批次列表
@@ -477,4 +483,4 @@ stateDiagram-v2
   - 预警级别选择：设置不同预警级别的天数
   - 预警结果展示：展示即将过期的批次列表
   - 预警处理操作：提供批次处理的快捷操作
-  - 统计图表：以图表形式展示保质期分布情况 
+  - 统计图表：以图表形式展示保质期分布情况

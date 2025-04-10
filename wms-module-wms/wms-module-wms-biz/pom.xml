@@ -66,6 +66,12 @@
             <version>2.4.1-jdk8-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>cn.smart.wms</groupId>
+            <artifactId>wms-spring-boot-starter-lock</artifactId>
+            <version>2.4.1-jdk8-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
 
 
     </dependencies>

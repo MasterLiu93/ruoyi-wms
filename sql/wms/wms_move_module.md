@@ -1,4 +1,10 @@
-# 🔄 WMS库内移动模块设计文档
+---
+id: wms_move_module
+title: WMS移库管理模块设计文档
+sidebar_label: 移库管理模块
+---
+
+# 🔄 WMS 库内移动模块设计文档
 
 ![库内移动流程](https://mermaid.ink/img/pako:eNp1ksFuwjAMhl_F8mlIiJZCOXDaqBhhVKLdOLRHyNIaYurSSKmGEO--tAXEtl38x_7_2HayRc0wYzuXqmj5Z2Hb_WPF2v2Y8Ukzr_-QwVULiMkLrshzdtQnVnYKpE2lqS2JOeGuTG1M0yMBT3bvnT0EQTCSM_e_qMQrt6l0w7RkNkvVQDCrYkKV9NkcJCJk3Z0nIXx5f3hH47jL8tvbV_OKJTFh-kak1_ANF6-YlRzkcC6Stovhdm7aLBYgwwfuLfu3Jt9PYARPG6xZxL37lLNzDdOaK_zcuWB1jdAY-5J7ZxckVBZuxtw4AsE2JvJ2g4R31PzcJs9XzB6Py6WnPZ_bz3vMVrqo0Yf3XftN-wsdJJq3?type=png)
 
@@ -14,7 +20,7 @@
 
 ## 🎯 模块概述
 
-库内移动模块是WMS系统的重要功能模块，负责管理仓库内部的物料移动操作。通过库内移动单的创建、审核、执行，实现物料在仓库内不同库位之间的转移，优化仓库空间利用，提高库存管理效率，同时保证库存数据准确性。
+库内移动模块是 WMS 系统的重要功能模块，负责管理仓库内部的物料移动操作。通过库内移动单的创建、审核、执行，实现物料在仓库内不同库位之间的转移，优化仓库空间利用，提高库存管理效率，同时保证库存数据准确性。
 
 ### 核心功能
 
@@ -37,7 +43,7 @@
 
 #### 业务规则
 
-- 移动单编号系统自动生成，格式：YD + 年月日 + 4位流水号
+- 移动单编号系统自动生成，格式：YD + 年月日 + 4 位流水号
 - 移动类型包括：库位调整(0)、质量状态调整(1)、批次调整(2)、其他调整(3)
 - 移动单状态包括：草稿(0)、待审核(1)、审核通过(2)、审核拒绝(3)
 - 移动状态包括：待移动(0)、部分移动(1)、已完成(2)
@@ -87,104 +93,104 @@
 
 ### 1. 库内移动单表(wms_move_order)
 
-| 字段名 | 数据类型 | 是否必填 | 描述 |
-|-------|---------|---------|------|
-| id | bigint(20) | 是 | 主键ID |
-| move_order_no | varchar(64) | 是 | 移动单号 |
-| move_type | tinyint(4) | 是 | 移动类型 |
-| warehouse_id | bigint(20) | 是 | 仓库ID |
-| warehouse_name | varchar(255) | 是 | 仓库名称 |
-| status | tinyint(4) | 是 | 单据状态 |
-| move_status | tinyint(4) | 是 | 移动状态 |
-| plan_time | datetime | 否 | 计划移动时间 |
-| reason | varchar(255) | 否 | 移动原因 |
-| auditor | varchar(64) | 否 | 审核人 |
-| audit_time | datetime | 否 | 审核时间 |
-| audit_remark | varchar(512) | 否 | 审核备注 |
-| remark | varchar(512) | 否 | 备注 |
-| creator | varchar(64) | 是 | 创建人 |
-| create_time | datetime | 是 | 创建时间 |
-| updater | varchar(64) | 是 | 更新人 |
-| update_time | datetime | 是 | 更新时间 |
-| deleted | bit(1) | 是 | 是否删除 |
-| tenant_id | bigint(20) | 是 | 租户编号 |
+| 字段名         | 数据类型     | 是否必填 | 描述         |
+| -------------- | ------------ | -------- | ------------ |
+| id             | bigint(20)   | 是       | 主键 ID      |
+| move_order_no  | varchar(64)  | 是       | 移动单号     |
+| move_type      | tinyint(4)   | 是       | 移动类型     |
+| warehouse_id   | bigint(20)   | 是       | 仓库 ID      |
+| warehouse_name | varchar(255) | 是       | 仓库名称     |
+| status         | tinyint(4)   | 是       | 单据状态     |
+| move_status    | tinyint(4)   | 是       | 移动状态     |
+| plan_time      | datetime     | 否       | 计划移动时间 |
+| reason         | varchar(255) | 否       | 移动原因     |
+| auditor        | varchar(64)  | 否       | 审核人       |
+| audit_time     | datetime     | 否       | 审核时间     |
+| audit_remark   | varchar(512) | 否       | 审核备注     |
+| remark         | varchar(512) | 否       | 备注         |
+| creator        | varchar(64)  | 是       | 创建人       |
+| create_time    | datetime     | 是       | 创建时间     |
+| updater        | varchar(64)  | 是       | 更新人       |
+| update_time    | datetime     | 是       | 更新时间     |
+| deleted        | bit(1)       | 是       | 是否删除     |
+| tenant_id      | bigint(20)   | 是       | 租户编号     |
 
 ### 2. 库内移动单明细表(wms_move_order_detail)
 
-| 字段名 | 数据类型 | 是否必填 | 描述 |
-|-------|---------|---------|------|
-| id | bigint(20) | 是 | 主键ID |
-| move_order_id | bigint(20) | 是 | 移动单ID |
-| item_id | bigint(20) | 是 | 物料ID |
-| item_code | varchar(64) | 是 | 物料编码 |
-| item_name | varchar(255) | 是 | 物料名称 |
-| spec | varchar(255) | 否 | 规格 |
-| unit | varchar(64) | 否 | 单位 |
-| plan_count | int(11) | 是 | 计划数量 |
-| move_count | int(11) | 否 | 已移动数量 |
-| source_area_id | bigint(20) | 否 | 源货区ID |
-| source_area_name | varchar(255) | 否 | 源货区名称 |
-| source_rack_id | bigint(20) | 否 | 源货架ID |
-| source_rack_name | varchar(255) | 否 | 源货架名称 |
-| source_location_id | bigint(20) | 是 | 源库位ID |
-| source_location_name | varchar(255) | 是 | 源库位名称 |
-| target_area_id | bigint(20) | 否 | 目标货区ID |
-| target_area_name | varchar(255) | 否 | 目标货区名称 |
-| target_rack_id | bigint(20) | 否 | 目标货架ID |
-| target_rack_name | varchar(255) | 否 | 目标货架名称 |
-| target_location_id | bigint(20) | 是 | 目标库位ID |
-| target_location_name | varchar(255) | 是 | 目标库位名称 |
-| batch_id | bigint(20) | 否 | 批次ID |
-| batch_code | varchar(64) | 否 | 批次号 |
-| status | tinyint(4) | 是 | 状态 |
-| remark | varchar(512) | 否 | 备注 |
-| creator | varchar(64) | 是 | 创建人 |
-| create_time | datetime | 是 | 创建时间 |
-| updater | varchar(64) | 是 | 更新人 |
-| update_time | datetime | 是 | 更新时间 |
-| deleted | bit(1) | 是 | 是否删除 |
-| tenant_id | bigint(20) | 是 | 租户编号 |
+| 字段名               | 数据类型     | 是否必填 | 描述         |
+| -------------------- | ------------ | -------- | ------------ |
+| id                   | bigint(20)   | 是       | 主键 ID      |
+| move_order_id        | bigint(20)   | 是       | 移动单 ID    |
+| item_id              | bigint(20)   | 是       | 物料 ID      |
+| item_code            | varchar(64)  | 是       | 物料编码     |
+| item_name            | varchar(255) | 是       | 物料名称     |
+| spec                 | varchar(255) | 否       | 规格         |
+| unit                 | varchar(64)  | 否       | 单位         |
+| plan_count           | int(11)      | 是       | 计划数量     |
+| move_count           | int(11)      | 否       | 已移动数量   |
+| source_area_id       | bigint(20)   | 否       | 源货区 ID    |
+| source_area_name     | varchar(255) | 否       | 源货区名称   |
+| source_rack_id       | bigint(20)   | 否       | 源货架 ID    |
+| source_rack_name     | varchar(255) | 否       | 源货架名称   |
+| source_location_id   | bigint(20)   | 是       | 源库位 ID    |
+| source_location_name | varchar(255) | 是       | 源库位名称   |
+| target_area_id       | bigint(20)   | 否       | 目标货区 ID  |
+| target_area_name     | varchar(255) | 否       | 目标货区名称 |
+| target_rack_id       | bigint(20)   | 否       | 目标货架 ID  |
+| target_rack_name     | varchar(255) | 否       | 目标货架名称 |
+| target_location_id   | bigint(20)   | 是       | 目标库位 ID  |
+| target_location_name | varchar(255) | 是       | 目标库位名称 |
+| batch_id             | bigint(20)   | 否       | 批次 ID      |
+| batch_code           | varchar(64)  | 否       | 批次号       |
+| status               | tinyint(4)   | 是       | 状态         |
+| remark               | varchar(512) | 否       | 备注         |
+| creator              | varchar(64)  | 是       | 创建人       |
+| create_time          | datetime     | 是       | 创建时间     |
+| updater              | varchar(64)  | 是       | 更新人       |
+| update_time          | datetime     | 是       | 更新时间     |
+| deleted              | bit(1)       | 是       | 是否删除     |
+| tenant_id            | bigint(20)   | 是       | 租户编号     |
 
 ### 3. 库内移动记录表(wms_move_record)
 
-| 字段名 | 数据类型 | 是否必填 | 描述 |
-|-------|---------|---------|------|
-| id | bigint(20) | 是 | 主键ID |
-| move_order_id | bigint(20) | 是 | 移动单ID |
-| move_order_no | varchar(64) | 是 | 移动单号 |
-| move_order_detail_id | bigint(20) | 是 | 移动单明细ID |
-| move_type | tinyint(4) | 是 | 移动类型 |
-| warehouse_id | bigint(20) | 是 | 仓库ID |
-| warehouse_name | varchar(255) | 是 | 仓库名称 |
-| item_id | bigint(20) | 是 | 物料ID |
-| item_code | varchar(64) | 是 | 物料编码 |
-| item_name | varchar(255) | 是 | 物料名称 |
-| spec | varchar(255) | 否 | 规格 |
-| unit | varchar(64) | 否 | 单位 |
-| count | int(11) | 是 | 移动数量 |
-| source_area_id | bigint(20) | 否 | 源货区ID |
-| source_area_name | varchar(255) | 否 | 源货区名称 |
-| source_rack_id | bigint(20) | 否 | 源货架ID |
-| source_rack_name | varchar(255) | 否 | 源货架名称 |
-| source_location_id | bigint(20) | 是 | 源库位ID |
-| source_location_name | varchar(255) | 是 | 源库位名称 |
-| target_area_id | bigint(20) | 否 | 目标货区ID |
-| target_area_name | varchar(255) | 否 | 目标货区名称 |
-| target_rack_id | bigint(20) | 否 | 目标货架ID |
-| target_rack_name | varchar(255) | 否 | 目标货架名称 |
-| target_location_id | bigint(20) | 是 | 目标库位ID |
-| target_location_name | varchar(255) | 是 | 目标库位名称 |
-| batch_id | bigint(20) | 否 | 批次ID |
-| batch_code | varchar(64) | 否 | 批次号 |
-| move_time | datetime | 是 | 移动时间 |
-| operator | varchar(64) | 是 | 操作人 |
-| remark | varchar(512) | 否 | 备注 |
-| creator | varchar(64) | 是 | 创建人 |
-| create_time | datetime | 是 | 创建时间 |
-| updater | varchar(64) | 是 | 更新人 |
-| update_time | datetime | 是 | 更新时间 |
-| deleted | bit(1) | 是 | 是否删除 |
-| tenant_id | bigint(20) | 是 | 租户编号 |
+| 字段名               | 数据类型     | 是否必填 | 描述          |
+| -------------------- | ------------ | -------- | ------------- |
+| id                   | bigint(20)   | 是       | 主键 ID       |
+| move_order_id        | bigint(20)   | 是       | 移动单 ID     |
+| move_order_no        | varchar(64)  | 是       | 移动单号      |
+| move_order_detail_id | bigint(20)   | 是       | 移动单明细 ID |
+| move_type            | tinyint(4)   | 是       | 移动类型      |
+| warehouse_id         | bigint(20)   | 是       | 仓库 ID       |
+| warehouse_name       | varchar(255) | 是       | 仓库名称      |
+| item_id              | bigint(20)   | 是       | 物料 ID       |
+| item_code            | varchar(64)  | 是       | 物料编码      |
+| item_name            | varchar(255) | 是       | 物料名称      |
+| spec                 | varchar(255) | 否       | 规格          |
+| unit                 | varchar(64)  | 否       | 单位          |
+| count                | int(11)      | 是       | 移动数量      |
+| source_area_id       | bigint(20)   | 否       | 源货区 ID     |
+| source_area_name     | varchar(255) | 否       | 源货区名称    |
+| source_rack_id       | bigint(20)   | 否       | 源货架 ID     |
+| source_rack_name     | varchar(255) | 否       | 源货架名称    |
+| source_location_id   | bigint(20)   | 是       | 源库位 ID     |
+| source_location_name | varchar(255) | 是       | 源库位名称    |
+| target_area_id       | bigint(20)   | 否       | 目标货区 ID   |
+| target_area_name     | varchar(255) | 否       | 目标货区名称  |
+| target_rack_id       | bigint(20)   | 否       | 目标货架 ID   |
+| target_rack_name     | varchar(255) | 否       | 目标货架名称  |
+| target_location_id   | bigint(20)   | 是       | 目标库位 ID   |
+| target_location_name | varchar(255) | 是       | 目标库位名称  |
+| batch_id             | bigint(20)   | 否       | 批次 ID       |
+| batch_code           | varchar(64)  | 否       | 批次号        |
+| move_time            | datetime     | 是       | 移动时间      |
+| operator             | varchar(64)  | 是       | 操作人        |
+| remark               | varchar(512) | 否       | 备注          |
+| creator              | varchar(64)  | 是       | 创建人        |
+| create_time          | datetime     | 是       | 创建时间      |
+| updater              | varchar(64)  | 是       | 更新人        |
+| update_time          | datetime     | 是       | 更新时间      |
+| deleted              | bit(1)       | 是       | 是否删除      |
+| tenant_id            | bigint(20)   | 是       | 租户编号      |
 
 ## 🔄 业务流程
 
@@ -246,20 +252,20 @@ stateDiagram-v2
 
 ### 库内移动单状态定义
 
-| 状态码 | 状态名称 | 描述 |
-|-------|---------|------|
-| 0 | 草稿 | 移动单初始状态，可修改 |
-| 1 | 待审核 | 移动单已提交，等待审核，不可修改 |
-| 2 | 审核通过 | 移动单已审核通过，可执行移动操作 |
-| 3 | 审核拒绝 | 移动单已审核拒绝，流程终止 |
+| 状态码 | 状态名称 | 描述                             |
+| ------ | -------- | -------------------------------- |
+| 0      | 草稿     | 移动单初始状态，可修改           |
+| 1      | 待审核   | 移动单已提交，等待审核，不可修改 |
+| 2      | 审核通过 | 移动单已审核通过，可执行移动操作 |
+| 3      | 审核拒绝 | 移动单已审核拒绝，流程终止       |
 
 ### 移动状态定义
 
-| 状态码 | 状态名称 | 描述 |
-|-------|---------|------|
-| 0 | 待移动 | 移动单待执行移动操作 |
-| 1 | 部分移动 | 移动单部分商品已移动 |
-| 2 | 已完成 | 移动单全部商品已移动 |
+| 状态码 | 状态名称 | 描述                 |
+| ------ | -------- | -------------------- |
+| 0      | 待移动   | 移动单待执行移动操作 |
+| 1      | 部分移动 | 移动单部分商品已移动 |
+| 2      | 已完成   | 移动单全部商品已移动 |
 
 ## 🔌 接口设计
 
@@ -274,7 +280,7 @@ stateDiagram-v2
   - moveType: 移动类型（可选）
   - status: 单据状态（可选）
   - moveStatus: 移动状态（可选）
-  - warehouseId: 仓库ID（可选）
+  - warehouseId: 仓库 ID（可选）
   - createTime: 创建时间范围（可选）
   - pageNo: 页码（必填）
   - pageSize: 每页记录数（必填）
@@ -285,7 +291,7 @@ stateDiagram-v2
 - **接口路径**: `/wms/move-order/get`
 - **请求方式**: GET
 - **请求参数**:
-  - id: 移动单ID（必填）
+  - id: 移动单 ID（必填）
 - **响应结果**: 返回移动单详情及明细列表
 
 #### 创建移动单
@@ -319,30 +325,30 @@ stateDiagram-v2
     ]
   }
   ```
-- **响应结果**: 创建成功返回移动单ID及单号
+- **响应结果**: 创建成功返回移动单 ID 及单号
 
 #### 更新移动单
 
 - **接口路径**: `/wms/move-order/update`
 - **请求方式**: PUT
-- **请求参数**: 与创建移动单类似，增加id字段
-- **响应结果**: 更新成功返回true
+- **请求参数**: 与创建移动单类似，增加 id 字段
+- **响应结果**: 更新成功返回 true
 
 #### 删除移动单
 
 - **接口路径**: `/wms/move-order/delete`
 - **请求方式**: DELETE
 - **请求参数**:
-  - id: 移动单ID（必填）
-- **响应结果**: 删除成功返回true
+  - id: 移动单 ID（必填）
+- **响应结果**: 删除成功返回 true
 
 #### 提交移动单审核
 
 - **接口路径**: `/wms/move-order/submit`
 - **请求方式**: POST
 - **请求参数**:
-  - id: 移动单ID（必填）
-- **响应结果**: 提交成功返回true
+  - id: 移动单 ID（必填）
+- **响应结果**: 提交成功返回 true
 
 #### 审核移动单
 
@@ -356,7 +362,7 @@ stateDiagram-v2
     "auditRemark": "审核通过"
   }
   ```
-- **响应结果**: 审核成功返回true
+- **响应结果**: 审核成功返回 true
 
 ### 2. 库内移动操作接口
 
@@ -373,17 +379,17 @@ stateDiagram-v2
     "remark": "部分移动"
   }
   ```
-- **响应结果**: 移动成功返回true
+- **响应结果**: 移动成功返回 true
 
 #### 获取移动记录列表
 
 - **接口路径**: `/wms/move-record/page`
 - **请求方式**: GET
 - **请求参数**:
-  - moveOrderId: 移动单ID（可选）
+  - moveOrderId: 移动单 ID（可选）
   - moveOrderNo: 移动单号（可选）
   - moveType: 移动类型（可选）
-  - warehouseId: 仓库ID（可选）
+  - warehouseId: 仓库 ID（可选）
   - itemCode: 物料编码（可选）
   - moveTime: 移动时间范围（可选）
   - pageNo: 页码（必填）
@@ -424,4 +430,4 @@ stateDiagram-v2
   - 移动单信息区：显示移动单基本信息
   - 待移动明细区：显示待移动的物料明细
   - 移动操作区：确认源库位、目标库位、输入移动数量等
-  - 操作按钮：确认移动、取消等操作按钮 
+  - 操作按钮：确认移动、取消等操作按钮

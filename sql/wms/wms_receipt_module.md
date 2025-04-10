@@ -1,4 +1,10 @@
-# 📥 WMS入库管理模块设计文档
+---
+id: wms_receipt_module
+title: WMS入库管理模块设计文档
+sidebar_label: 入库管理模块
+---
+
+# 📥 WMS 入库管理模块设计文档
 
 ![入库管理流程](https://mermaid.ink/img/pako:eNp1kstOwzAQRX9l5FUqNYFCWWSVUihtEa1asWA3mmZKrDoesmZQq4r_jvNoG1B3M-fO9djjGRxGQQyO3-2Z2tP3JeX1ZUb5Yoz4JBGNfN9KuNYIGUBUQeFW8pbx1o0YgHUEzmuMYsJhMXGqVggnwdd8-kZ7YRgAl2D_Lyq9j3smdQ1SgxYOowciMkvIlNRfBiISJC161yHu7K_-YG085NOL7zS_7JxrmBdN9qJnRF8xaIXgBYxmzLVaxOj1IjV5QODSTl-6fzbZvYItiIIOVkQwly1-hOOOd0pKfL-DXC1iotTb8R05F3CsxOUeK5lDLrQldrZBwjuqf7zI3mfMjsfVaracHb9urw6YHdRE0LAFt8rv0-8Pzg2bNw?type=png)
 
@@ -14,7 +20,7 @@
 
 ## 🎯 模块概述
 
-入库管理模块是WMS系统的核心功能模块之一，负责管理货物从外部进入仓库的全过程。通过入库单的创建、审核、执行，确保货物正确入库并更新库存信息，同时记录入库操作的全过程，为后续追溯提供依据。
+入库管理模块是 WMS 系统的核心功能模块之一，负责管理货物从外部进入仓库的全过程。通过入库单的创建、审核、执行，确保货物正确入库并更新库存信息，同时记录入库操作的全过程，为后续追溯提供依据。
 
 ### 核心功能
 
@@ -37,7 +43,7 @@
 
 #### 业务规则
 
-- 入库单编号系统自动生成，格式：RK + 年月日 + 4位流水号
+- 入库单编号系统自动生成，格式：RK + 年月日 + 4 位流水号
 - 入库类型包括：采购入库(0)、生产入库(1)、退货入库(2)、调拨入库(3)、其他入库(4)
 - 入库单状态包括：草稿(0)、待审核(1)、审核通过(2)、审核拒绝(3)
 - 入库状态包括：待入库(0)、部分入库(1)、已完成(2)
@@ -88,93 +94,93 @@
 
 ### 1. 入库单表(wms_receipt_order)
 
-| 字段名 | 数据类型 | 是否必填 | 描述 |
-|-------|---------|---------|------|
-| id | bigint(20) | 是 | 主键ID |
-| receipt_order_no | varchar(64) | 是 | 入库单号 |
-| receipt_type | tinyint(4) | 是 | 入库类型 |
-| supplier_id | bigint(20) | 否 | 供应商ID |
-| supplier_name | varchar(255) | 否 | 供应商名称 |
-| warehouse_id | bigint(20) | 是 | 仓库ID |
-| warehouse_name | varchar(255) | 是 | 仓库名称 |
-| area_id | bigint(20) | 否 | 货区ID |
-| area_name | varchar(255) | 否 | 货区名称 |
-| expected_time | datetime | 否 | 预计到货时间 |
-| status | tinyint(4) | 是 | 单据状态 |
-| receipt_status | tinyint(4) | 是 | 入库状态 |
-| auditor | varchar(64) | 否 | 审核人 |
-| audit_time | datetime | 否 | 审核时间 |
-| audit_remark | varchar(512) | 否 | 审核备注 |
-| remark | varchar(512) | 否 | 备注 |
-| creator | varchar(64) | 是 | 创建人 |
-| create_time | datetime | 是 | 创建时间 |
-| updater | varchar(64) | 是 | 更新人 |
-| update_time | datetime | 是 | 更新时间 |
-| deleted | bit(1) | 是 | 是否删除 |
-| tenant_id | bigint(20) | 是 | 租户编号 |
+| 字段名           | 数据类型     | 是否必填 | 描述         |
+| ---------------- | ------------ | -------- | ------------ |
+| id               | bigint(20)   | 是       | 主键 ID      |
+| receipt_order_no | varchar(64)  | 是       | 入库单号     |
+| receipt_type     | tinyint(4)   | 是       | 入库类型     |
+| supplier_id      | bigint(20)   | 否       | 供应商 ID    |
+| supplier_name    | varchar(255) | 否       | 供应商名称   |
+| warehouse_id     | bigint(20)   | 是       | 仓库 ID      |
+| warehouse_name   | varchar(255) | 是       | 仓库名称     |
+| area_id          | bigint(20)   | 否       | 货区 ID      |
+| area_name        | varchar(255) | 否       | 货区名称     |
+| expected_time    | datetime     | 否       | 预计到货时间 |
+| status           | tinyint(4)   | 是       | 单据状态     |
+| receipt_status   | tinyint(4)   | 是       | 入库状态     |
+| auditor          | varchar(64)  | 否       | 审核人       |
+| audit_time       | datetime     | 否       | 审核时间     |
+| audit_remark     | varchar(512) | 否       | 审核备注     |
+| remark           | varchar(512) | 否       | 备注         |
+| creator          | varchar(64)  | 是       | 创建人       |
+| create_time      | datetime     | 是       | 创建时间     |
+| updater          | varchar(64)  | 是       | 更新人       |
+| update_time      | datetime     | 是       | 更新时间     |
+| deleted          | bit(1)       | 是       | 是否删除     |
+| tenant_id        | bigint(20)   | 是       | 租户编号     |
 
 ### 2. 入库单明细表(wms_receipt_order_detail)
 
-| 字段名 | 数据类型 | 是否必填 | 描述 |
-|-------|---------|---------|------|
-| id | bigint(20) | 是 | 主键ID |
-| receipt_order_id | bigint(20) | 是 | 入库单ID |
-| item_id | bigint(20) | 是 | 物料ID |
-| item_code | varchar(64) | 是 | 物料编码 |
-| item_name | varchar(255) | 是 | 物料名称 |
-| spec | varchar(255) | 否 | 规格 |
-| unit | varchar(64) | 否 | 单位 |
-| plan_count | int(11) | 是 | 计划数量 |
-| receipt_count | int(11) | 否 | 入库数量 |
-| rack_id | bigint(20) | 否 | 货架ID |
-| rack_name | varchar(255) | 否 | 货架名称 |
-| location_id | bigint(20) | 否 | 库位ID |
-| location_name | varchar(255) | 否 | 库位名称 |
-| batch_id | bigint(20) | 否 | 批次ID |
-| status | tinyint(4) | 是 | 状态 |
-| remark | varchar(512) | 否 | 备注 |
-| creator | varchar(64) | 是 | 创建人 |
-| create_time | datetime | 是 | 创建时间 |
-| updater | varchar(64) | 是 | 更新人 |
-| update_time | datetime | 是 | 更新时间 |
-| deleted | bit(1) | 是 | 是否删除 |
-| tenant_id | bigint(20) | 是 | 租户编号 |
+| 字段名           | 数据类型     | 是否必填 | 描述      |
+| ---------------- | ------------ | -------- | --------- |
+| id               | bigint(20)   | 是       | 主键 ID   |
+| receipt_order_id | bigint(20)   | 是       | 入库单 ID |
+| item_id          | bigint(20)   | 是       | 物料 ID   |
+| item_code        | varchar(64)  | 是       | 物料编码  |
+| item_name        | varchar(255) | 是       | 物料名称  |
+| spec             | varchar(255) | 否       | 规格      |
+| unit             | varchar(64)  | 否       | 单位      |
+| plan_count       | int(11)      | 是       | 计划数量  |
+| receipt_count    | int(11)      | 否       | 入库数量  |
+| rack_id          | bigint(20)   | 否       | 货架 ID   |
+| rack_name        | varchar(255) | 否       | 货架名称  |
+| location_id      | bigint(20)   | 否       | 库位 ID   |
+| location_name    | varchar(255) | 否       | 库位名称  |
+| batch_id         | bigint(20)   | 否       | 批次 ID   |
+| status           | tinyint(4)   | 是       | 状态      |
+| remark           | varchar(512) | 否       | 备注      |
+| creator          | varchar(64)  | 是       | 创建人    |
+| create_time      | datetime     | 是       | 创建时间  |
+| updater          | varchar(64)  | 是       | 更新人    |
+| update_time      | datetime     | 是       | 更新时间  |
+| deleted          | bit(1)       | 是       | 是否删除  |
+| tenant_id        | bigint(20)   | 是       | 租户编号  |
 
 ### 3. 入库操作记录表(wms_receipt_record)
 
-| 字段名 | 数据类型 | 是否必填 | 描述 |
-|-------|---------|---------|------|
-| id | bigint(20) | 是 | 主键ID |
-| receipt_order_id | bigint(20) | 是 | 入库单ID |
-| receipt_order_no | varchar(64) | 是 | 入库单号 |
-| receipt_order_detail_id | bigint(20) | 是 | 入库单明细ID |
-| receipt_type | tinyint(4) | 是 | 入库类型 |
-| warehouse_id | bigint(20) | 是 | 仓库ID |
-| warehouse_name | varchar(255) | 是 | 仓库名称 |
-| area_id | bigint(20) | 否 | 货区ID |
-| area_name | varchar(255) | 否 | 货区名称 |
-| rack_id | bigint(20) | 否 | 货架ID |
-| rack_name | varchar(255) | 否 | 货架名称 |
-| location_id | bigint(20) | 否 | 库位ID |
-| location_name | varchar(255) | 否 | 库位名称 |
-| batch_id | bigint(20) | 否 | 批次ID |
-| item_id | bigint(20) | 是 | 物料ID |
-| item_code | varchar(64) | 是 | 物料编码 |
-| item_name | varchar(255) | 是 | 物料名称 |
-| spec | varchar(255) | 否 | 规格 |
-| unit | varchar(64) | 否 | 单位 |
-| count | int(11) | 是 | 入库数量 |
-| supplier_id | bigint(20) | 否 | 供应商ID |
-| supplier_name | varchar(255) | 否 | 供应商名称 |
-| receipt_time | datetime | 是 | 入库时间 |
-| operator | varchar(64) | 是 | 操作人 |
-| remark | varchar(512) | 否 | 备注 |
-| creator | varchar(64) | 是 | 创建人 |
-| create_time | datetime | 是 | 创建时间 |
-| updater | varchar(64) | 是 | 更新人 |
-| update_time | datetime | 是 | 更新时间 |
-| deleted | bit(1) | 是 | 是否删除 |
-| tenant_id | bigint(20) | 是 | 租户编号 |
+| 字段名                  | 数据类型     | 是否必填 | 描述          |
+| ----------------------- | ------------ | -------- | ------------- |
+| id                      | bigint(20)   | 是       | 主键 ID       |
+| receipt_order_id        | bigint(20)   | 是       | 入库单 ID     |
+| receipt_order_no        | varchar(64)  | 是       | 入库单号      |
+| receipt_order_detail_id | bigint(20)   | 是       | 入库单明细 ID |
+| receipt_type            | tinyint(4)   | 是       | 入库类型      |
+| warehouse_id            | bigint(20)   | 是       | 仓库 ID       |
+| warehouse_name          | varchar(255) | 是       | 仓库名称      |
+| area_id                 | bigint(20)   | 否       | 货区 ID       |
+| area_name               | varchar(255) | 否       | 货区名称      |
+| rack_id                 | bigint(20)   | 否       | 货架 ID       |
+| rack_name               | varchar(255) | 否       | 货架名称      |
+| location_id             | bigint(20)   | 否       | 库位 ID       |
+| location_name           | varchar(255) | 否       | 库位名称      |
+| batch_id                | bigint(20)   | 否       | 批次 ID       |
+| item_id                 | bigint(20)   | 是       | 物料 ID       |
+| item_code               | varchar(64)  | 是       | 物料编码      |
+| item_name               | varchar(255) | 是       | 物料名称      |
+| spec                    | varchar(255) | 否       | 规格          |
+| unit                    | varchar(64)  | 否       | 单位          |
+| count                   | int(11)      | 是       | 入库数量      |
+| supplier_id             | bigint(20)   | 否       | 供应商 ID     |
+| supplier_name           | varchar(255) | 否       | 供应商名称    |
+| receipt_time            | datetime     | 是       | 入库时间      |
+| operator                | varchar(64)  | 是       | 操作人        |
+| remark                  | varchar(512) | 否       | 备注          |
+| creator                 | varchar(64)  | 是       | 创建人        |
+| create_time             | datetime     | 是       | 创建时间      |
+| updater                 | varchar(64)  | 是       | 更新人        |
+| update_time             | datetime     | 是       | 更新时间      |
+| deleted                 | bit(1)       | 是       | 是否删除      |
+| tenant_id               | bigint(20)   | 是       | 租户编号      |
 
 ## 🔄 业务流程
 
@@ -236,20 +242,20 @@ stateDiagram-v2
 
 ### 入库单状态定义
 
-| 状态码 | 状态名称 | 描述 |
-|-------|---------|------|
-| 0 | 草稿 | 入库单初始状态，可修改 |
-| 1 | 待审核 | 入库单已提交，等待审核，不可修改 |
-| 2 | 审核通过 | 入库单已审核通过，可执行入库操作 |
-| 3 | 审核拒绝 | 入库单已审核拒绝，流程终止 |
+| 状态码 | 状态名称 | 描述                             |
+| ------ | -------- | -------------------------------- |
+| 0      | 草稿     | 入库单初始状态，可修改           |
+| 1      | 待审核   | 入库单已提交，等待审核，不可修改 |
+| 2      | 审核通过 | 入库单已审核通过，可执行入库操作 |
+| 3      | 审核拒绝 | 入库单已审核拒绝，流程终止       |
 
 ### 入库状态定义
 
-| 状态码 | 状态名称 | 描述 |
-|-------|---------|------|
-| 0 | 待入库 | 入库单待执行入库操作 |
-| 1 | 部分入库 | 入库单部分商品已入库 |
-| 2 | 已完成 | 入库单全部商品已入库 |
+| 状态码 | 状态名称 | 描述                 |
+| ------ | -------- | -------------------- |
+| 0      | 待入库   | 入库单待执行入库操作 |
+| 1      | 部分入库 | 入库单部分商品已入库 |
+| 2      | 已完成   | 入库单全部商品已入库 |
 
 ## 🔌 接口设计
 
@@ -264,8 +270,8 @@ stateDiagram-v2
   - receiptType: 入库类型（可选）
   - status: 单据状态（可选）
   - receiptStatus: 入库状态（可选）
-  - warehouseId: 仓库ID（可选）
-  - supplierId: 供应商ID（可选）
+  - warehouseId: 仓库 ID（可选）
+  - supplierId: 供应商 ID（可选）
   - createTime: 创建时间范围（可选）
   - pageNo: 页码（必填）
   - pageSize: 每页记录数（必填）
@@ -298,7 +304,7 @@ stateDiagram-v2
 - **接口路径**: `/wms/receipt-order/get`
 - **请求方式**: GET
 - **请求参数**:
-  - id: 入库单ID（必填）
+  - id: 入库单 ID（必填）
 - **响应结果**:
   ```json
   {
@@ -431,7 +437,7 @@ stateDiagram-v2
 - **接口路径**: `/wms/receipt-order/delete`
 - **请求方式**: DELETE
 - **请求参数**:
-  - id: 入库单ID（必填）
+  - id: 入库单 ID（必填）
 - **响应结果**:
   ```json
   {
@@ -446,7 +452,7 @@ stateDiagram-v2
 - **接口路径**: `/wms/receipt-order/submit`
 - **请求方式**: POST
 - **请求参数**:
-  - id: 入库单ID（必填）
+  - id: 入库单 ID（必填）
 - **响应结果**:
   ```json
   {
@@ -511,10 +517,10 @@ stateDiagram-v2
 - **接口路径**: `/wms/receipt-record/page`
 - **请求方式**: GET
 - **请求参数**:
-  - receiptOrderId: 入库单ID（可选）
+  - receiptOrderId: 入库单 ID（可选）
   - receiptOrderNo: 入库单号（可选）
   - receiptType: 入库类型（可选）
-  - warehouseId: 仓库ID（可选）
+  - warehouseId: 仓库 ID（可选）
   - itemCode: 物料编码（可选）
   - itemName: 物料名称（可选）
   - receiptTime: 入库时间范围（可选）
@@ -588,4 +594,4 @@ stateDiagram-v2
   - 入库单信息区：显示入库单基本信息
   - 待入库明细区：显示待入库的物料明细
   - 入库操作区：选择库位、输入入库数量、选择批次等
-  - 操作按钮：确认入库、取消等操作按钮 
+  - 操作按钮：确认入库、取消等操作按钮

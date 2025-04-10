@@ -4,6 +4,7 @@ import cn.smart.wms.framework.common.exception.ErrorCode;
 import cn.smart.wms.framework.common.pojo.PageParam;
 import cn.smart.wms.framework.common.pojo.PageResult;
 import cn.smart.wms.framework.common.util.object.BeanUtils;
+import cn.smart.wms.framework.lock.core.annotation.DistributedLock;
 import cn.smart.wms.module.wms.controller.admin.receiptorder.vo.ReceiptOrderPageReqVO;
 import cn.smart.wms.module.wms.controller.admin.receiptorder.vo.ReceiptOrderSaveReqVO;
 import cn.smart.wms.module.wms.controller.admin.receiptrecord.vo.ReceiptRecordSaveReqVO;
@@ -19,6 +20,9 @@ import cn.smart.wms.module.wms.service.batchinventory.BatchInventoryService;
 import cn.smart.wms.module.wms.service.inventory.InventoryService;
 import cn.smart.wms.module.wms.service.receiptorderdetail.ReceiptOrderDetailService;
 import cn.smart.wms.module.wms.service.receiptrecord.ReceiptRecordService;
+import cn.smart.wms.module.wms.service.audit.OrderAuditService;
+import cn.smart.wms.module.wms.enums.OrderTypeEnum;
+import cn.smart.wms.module.wms.enums.AuditStatusEnum;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -59,6 +63,9 @@ public class ReceiptOrderServiceImpl implements ReceiptOrderService {
     
     @Resource
     private BatchInventoryService batchInventoryService;
+    
+    @Resource
+    private OrderAuditService orderAuditService;
 
     @Override
     public Long createReceiptOrder(ReceiptOrderSaveReqVO createReqVO) {
@@ -240,6 +247,14 @@ public class ReceiptOrderServiceImpl implements ReceiptOrderService {
             throw exception(new ErrorCode(1002005099, "入库单状态更新失败"));
         }
         
+        // 创建审核记录
+        orderAuditService.createOrderAudit(
+            id, 
+            OrderTypeEnum.RECEIPT.getType(), 
+            Boolean.TRUE.equals(approved) ? AuditStatusEnum.APPROVED.getStatus() : AuditStatusEnum.REJECTED.getStatus(), 
+            remark
+        );
+        
         // 如果审批通过，确保入库状态为待入库
         if (approved) {
             // 在这里不再自动设置入库状态，而是通过updateReceiptOrderStatus来更新
@@ -316,6 +331,7 @@ public class ReceiptOrderServiceImpl implements ReceiptOrderService {
     
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @DistributedLock(prefix = "receipt", key = "#detailId", errorMessage = "入库处理中，请稍后再试")
     public Long executeReceiptByDetail(Long detailId, Long locationId, Long batchId, Integer count, String remark) {
         // 校验入库单明细存在
         ReceiptOrderDetailDO detail = receiptOrderDetailMapper.selectById(detailId);
@@ -898,6 +914,7 @@ public class ReceiptOrderServiceImpl implements ReceiptOrderService {
     
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @DistributedLock(prefix = "receipt", key = "#orderId", errorMessage = "入库单处理中，请稍后再试")
     public void batchExecuteReceiptByOrderId(Long orderId) {
         // 校验入库单
         ReceiptOrderDO receiptOrder = validateReceiptOrderExists(orderId);

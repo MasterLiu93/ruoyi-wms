@@ -80,6 +80,7 @@ public interface ErrorCodeConstants {
     ErrorCode INVENTORY_NOT_EXISTS = new ErrorCode(1002004001, "库存不存在");
     ErrorCode INVENTORY_INSUFFICIENT = new ErrorCode(1002004002, "库存不足");
     ErrorCode INVENTORY_FROZEN = new ErrorCode(1002004003, "库存已冻结");
+    ErrorCode INVENTORY_NOT_ENOUGH = new ErrorCode(1002004004, "没有足够的库存");
 
     ErrorCode INVENTORY_CHECK_NOT_EXISTS = new ErrorCode(1002004101, "盘点单不存在");
     ErrorCode INVENTORY_CHECK_STATUS_ERROR = new ErrorCode(1002004102, "盘点单状态异常");
@@ -99,6 +100,17 @@ public interface ErrorCodeConstants {
     ErrorCode SHIPMENT_ORDER_STATUS_ERROR = new ErrorCode(1002006002, "出库单状态异常");
     ErrorCode SHIPMENT_ORDER_DETAIL_NOT_EXISTS = new ErrorCode(1002006101, "出库单明细不存在");
     ErrorCode SHIPMENT_RECORD_NOT_EXISTS = new ErrorCode(1002006201, "出库记录不存在");
+    ErrorCode SHIPMENT_ORDER_UPDATE_ONLY_DRAFT_STATUS = new ErrorCode(1002006003, "只有草稿状态的出库单可以更新");
+    ErrorCode SHIPMENT_ORDER_DELETE_ONLY_DRAFT_STATUS = new ErrorCode(1002006004, "只有草稿状态的出库单可以删除");
+    ErrorCode SHIPMENT_ORDER_SUBMIT_ONLY_DRAFT_STATUS = new ErrorCode(1002006005, "只有草稿状态的出库单可以提交审核");
+    ErrorCode SHIPMENT_ORDER_SUBMIT_NO_DETAILS = new ErrorCode(1002006006, "出库单没有明细，不能提交审核");
+    ErrorCode SHIPMENT_ORDER_APPROVE_ONLY_PENDING_STATUS = new ErrorCode(1002006007, "只有待审核状态的出库单可以审核");
+    ErrorCode SHIPMENT_ORDER_CANCEL_ERROR_STATUS = new ErrorCode(1002006008, "已完成的出库单不能取消");
+    ErrorCode SHIPMENT_ORDER_NOT_APPROVED = new ErrorCode(1002006009, "出库单未审核通过，不能执行出库操作");
+    ErrorCode SHIPMENT_ORDER_COMPLETE_ERROR_STATUS = new ErrorCode(1002006010, "只有部分出库的出库单才能手动完成");
+    ErrorCode SHIPMENT_ORDER_NOT_COMPLETE = new ErrorCode(1002006011, "出库单未完成出库操作，不能标记为完成");
+    ErrorCode SHIPMENT_ORDER_QUANTITY_ERROR = new ErrorCode(1002006012, "出库数量无效或超过可出库数量");
+    ErrorCode SHIPMENT_ORDER_DETAIL_MISMATCH = new ErrorCode(1002006102, "出库单明细不属于该出库单");
 
     // ========== 移库管理 1002007xxx ==========
     ErrorCode MOVE_ORDER_NOT_EXISTS = new ErrorCode(1002007001, "移库单不存在");

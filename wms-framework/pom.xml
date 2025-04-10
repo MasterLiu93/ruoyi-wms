@@ -28,6 +28,7 @@
         <module>wms-spring-boot-starter-biz-data-permission</module>
         <module>wms-spring-boot-starter-biz-ip</module>
         <module>wms-spring-boot-starter-idgenerator</module>
+        <module>wms-spring-boot-starter-lock</module>
     </modules>
 
     <artifactId>wms-framework</artifactId>

@@ -495,6 +495,38 @@ public class InventoryServiceImpl implements InventoryService {
         return inventoryMapper.selectListByConditions(warehouseId, locationIds, itemIds);
     }
     
+    @Override
+    public InventoryDO selectOldestInventory(Long warehouseId, Long itemId, Integer requiredCount) {
+        if (warehouseId == null || itemId == null || requiredCount == null || requiredCount <= 0) {
+            log.warn("获取最早入库库存参数无效: warehouseId={}, itemId={}, requiredCount={}", 
+                    warehouseId, itemId, requiredCount);
+            return null;
+        }
+        
+        log.info("查询最早入库库存记录: warehouseId={}, itemId={}, requiredCount={}", 
+                warehouseId, itemId, requiredCount);
+        
+        try {
+            // 查询满足条件的最早入库的库存记录
+            InventoryDO inventory = inventoryMapper.selectOldestInventoryByWarehouseAndItem(
+                    warehouseId, itemId, requiredCount);
+            
+            if (inventory != null) {
+                log.info("找到最早入库库存记录: inventoryId={}, locationId={}, availableCount={}, createTime={}", 
+                        inventory.getId(), inventory.getLocationId(), 
+                        inventory.getAvailableCount(), inventory.getCreateTime());
+            } else {
+                log.warn("未找到满足条件的库存记录");
+            }
+            
+            return inventory;
+        } catch (Exception e) {
+            log.error("查询最早入库库存记录失败: warehouseId={}, itemId={}, requiredCount={}, error={}", 
+                    warehouseId, itemId, requiredCount, e.getMessage(), e);
+            return null;
+        }
+    }
+    
     /**
      * 创建库存移动记录
      */

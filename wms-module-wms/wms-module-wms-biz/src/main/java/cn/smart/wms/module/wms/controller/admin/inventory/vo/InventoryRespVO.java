@@ -31,6 +31,14 @@ public class InventoryRespVO {
     @ExcelProperty("库位名称")
     private String locationName;
 
+    @Schema(description = "货区ID")
+    @ExcelProperty("货区ID")
+    private Long areaId;
+
+    @Schema(description = "货架ID")
+    @ExcelProperty("货架ID")
+    private Long rackId;
+
     @Schema(description = "物料ID", requiredMode = Schema.RequiredMode.REQUIRED, example = "15331")
     @ExcelProperty("物料ID")
     private Long itemId;

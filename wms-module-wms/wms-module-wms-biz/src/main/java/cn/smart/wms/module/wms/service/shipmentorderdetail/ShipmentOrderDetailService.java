@@ -6,6 +6,7 @@ import cn.smart.wms.module.wms.controller.admin.shipmentorderdetail.vo.ShipmentO
 import cn.smart.wms.module.wms.dal.dataobject.shipmentorderdetail.ShipmentOrderDetailDO;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * 出库单明细 Service 接口
@@ -51,5 +52,36 @@ public interface ShipmentOrderDetailService {
      * @return 出库单明细分页
      */
     PageResult<ShipmentOrderDetailDO> getShipmentOrderDetailPage(ShipmentOrderDetailPageReqVO pageReqVO);
+    
+    /**
+     * 根据出库单ID获取明细列表
+     *
+     * @param orderId 出库单ID
+     * @return 明细列表
+     */
+    List<ShipmentOrderDetailDO> getShipmentOrderDetailListByOrderId(Long orderId);
 
+    /**
+     * 更新出库单明细状态
+     *
+     * @param id     明细ID
+     * @param status 新状态
+     */
+    void updateShipmentOrderDetailStatus(Long id, Integer status);
+
+    /**
+     * 判断出库单的所有明细是否都已完成出库
+     *
+     * @param orderId 出库单ID
+     * @return 如果所有明细都已完成出库，则返回true；否则返回false
+     */
+    boolean isAllShipped(Long orderId);
+
+    /**
+     * 更新出库单明细的实际出库数量
+     *
+     * @param id       明细ID
+     * @param quantity 出库数量增量
+     */
+    void updateRealCount(Long id, Integer quantity);
 }

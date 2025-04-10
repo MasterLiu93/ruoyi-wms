@@ -17,6 +17,16 @@ public class ShipmentOrderDetailSaveReqVO {
     @NotNull(message = "出库单ID不能为空")
     private Long shipmentOrderId;
 
+    @Schema(description = "仓库ID", requiredMode = Schema.RequiredMode.REQUIRED, example = "3588")
+    @NotNull(message = "仓库ID不能为空")
+    private Long warehouseId;
+
+    @Schema(description = "货区ID", example = "1234")
+    private Long areaId;
+
+    @Schema(description = "货架ID", example = "5678")
+    private Long rackId;
+
     @Schema(description = "物料ID", requiredMode = Schema.RequiredMode.REQUIRED, example = "636")
     @NotNull(message = "物料ID不能为空")
     private Long itemId;

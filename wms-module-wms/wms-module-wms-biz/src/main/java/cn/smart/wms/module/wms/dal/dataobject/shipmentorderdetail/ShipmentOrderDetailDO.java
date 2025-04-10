@@ -33,6 +33,18 @@ public class ShipmentOrderDetailDO extends BaseDO {
      */
     private Long shipmentOrderId;
     /**
+     * 仓库ID
+     */
+    private Long warehouseId;
+    /**
+     * 货区ID
+     */
+    private Long areaId;
+    /**
+     * 货架ID
+     */
+    private Long rackId;
+    /**
      * 物料ID
      */
     private Long itemId;

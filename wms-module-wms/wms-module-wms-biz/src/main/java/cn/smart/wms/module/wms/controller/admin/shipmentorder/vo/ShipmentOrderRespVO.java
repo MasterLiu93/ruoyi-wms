@@ -1,10 +1,12 @@
 package cn.smart.wms.module.wms.controller.admin.shipmentorder.vo;
 
+import cn.smart.wms.module.wms.controller.admin.shipmentorderdetail.vo.ShipmentOrderDetailRespVO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import com.alibaba.excel.annotation.*;
 
 @Schema(description = "管理后台 - 出库单 Response VO")
@@ -63,5 +65,8 @@ public class ShipmentOrderRespVO {
     @Schema(description = "创建时间", requiredMode = Schema.RequiredMode.REQUIRED)
     @ExcelProperty("创建时间")
     private LocalDateTime createTime;
+    
+    @Schema(description = "出库单明细列表")
+    private List<ShipmentOrderDetailRespVO> details;
 
 }

@@ -7,6 +7,8 @@ import cn.smart.wms.module.wms.dal.dataobject.shipmentorderdetail.ShipmentOrderD
 import org.apache.ibatis.annotations.Mapper;
 import cn.smart.wms.module.wms.controller.admin.shipmentorderdetail.vo.*;
 
+import java.util.List;
+
 /**
  * 出库单明细 Mapper
  *
@@ -28,6 +30,10 @@ public interface ShipmentOrderDetailMapper extends BaseMapperX<ShipmentOrderDeta
                 .eqIfPresent(ShipmentOrderDetailDO::getRemark, reqVO.getRemark())
                 .betweenIfPresent(ShipmentOrderDetailDO::getCreateTime, reqVO.getCreateTime())
                 .orderByDesc(ShipmentOrderDetailDO::getId));
+    }
+    
+    default List<ShipmentOrderDetailDO> selectListByOrderId(Long orderId) {
+        return selectList(ShipmentOrderDetailDO::getShipmentOrderId, orderId);
     }
 
 }

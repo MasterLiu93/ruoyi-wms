@@ -198,4 +198,14 @@ public interface InventoryService {
      * @return 库存列表
      */
     List<InventoryDO> getInventoryListByWarehouseAndLocationIdsAndItemIds(Long warehouseId, List<Long> locationIds, List<Long> itemIds);
+
+    /**
+     * 根据仓库ID和物料ID查询最早入库的库存记录
+     * 
+     * @param warehouseId 仓库ID
+     * @param itemId 物料ID
+     * @param requiredCount 所需数量，确保选择的库存记录有足够的可用数量
+     * @return 库存记录
+     */
+    InventoryDO selectOldestInventory(Long warehouseId, Long itemId, Integer requiredCount);
 }

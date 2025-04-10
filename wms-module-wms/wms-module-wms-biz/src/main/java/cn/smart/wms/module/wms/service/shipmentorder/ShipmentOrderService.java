@@ -49,5 +49,57 @@ public interface ShipmentOrderService {
      * @return 出库单分页
      */
     PageResult<ShipmentOrderDO> getShipmentOrderPage(ShipmentOrderPageReqVO pageReqVO);
+    
+    /**
+     * 创建出库单和明细（一次性保存）
+     *
+     * @param createReqVO 创建信息（包含出库单和明细）
+     * @return 出库单ID
+     */
+    Long createShipmentOrderWithDetails(@Valid ShipmentOrderSaveReqVO createReqVO);
+    
+    /**
+     * 更新出库单和明细（一次性保存）
+     *
+     * @param updateReqVO 更新信息（包含出库单和明细）
+     */
+    void updateShipmentOrderWithDetails(@Valid ShipmentOrderSaveReqVO updateReqVO);
+    
+    /**
+     * 提交出库单审核
+     *
+     * @param id 出库单ID
+     */
+    void submitShipmentOrder(Long id);
+    
+    /**
+     * 审核出库单
+     *
+     * @param id      出库单ID
+     * @param approved 是否通过
+     * @param remark   审核备注
+     */
+    void approveShipmentOrder(Long id, Boolean approved, String remark);
+    
+    /**
+     * 取消出库单
+     *
+     * @param id 出库单ID
+     */
+    void cancelShipmentOrder(Long id);
+
+    /**
+     * 完成出库单
+     *
+     * @param id 出库单编号
+     */
+    void completeShipmentOrder(Long id);
+
+    /**
+     * 执行出库操作
+     *
+     * @param reqVO 出库操作请求
+     */
+    void executeShipment(ShipmentOperationReqVO reqVO);
 
 }

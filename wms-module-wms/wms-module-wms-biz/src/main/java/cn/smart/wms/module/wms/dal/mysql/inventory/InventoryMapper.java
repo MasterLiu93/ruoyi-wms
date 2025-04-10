@@ -52,4 +52,17 @@ public interface InventoryMapper extends BaseMapperX<InventoryDO> {
     List<InventoryDO> selectListByConditions(@Param("warehouseId") Long warehouseId,
                                            @Param("locationIds") List<Long> locationIds,
                                            @Param("itemIds") List<Long> itemIds);
+    
+    /**
+     * 根据仓库ID和物料ID查询最早入库的库存记录
+     * 按照创建时间升序排序，返回最早入库的库存记录
+     * 
+     * @param warehouseId 仓库ID
+     * @param itemId 物料ID
+     * @param requiredCount 所需数量
+     * @return 库存记录
+     */
+    InventoryDO selectOldestInventoryByWarehouseAndItem(@Param("warehouseId") Long warehouseId,
+                                                  @Param("itemId") Long itemId,
+                                                  @Param("requiredCount") Integer requiredCount);
 }

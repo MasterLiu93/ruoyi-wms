@@ -23,6 +23,30 @@ public class ShipmentOrderDetailRespVO {
     @Schema(description = "物料ID", requiredMode = Schema.RequiredMode.REQUIRED, example = "636")
     @ExcelProperty("物料ID")
     private Long itemId;
+    
+    @Schema(description = "物料编码")
+    @ExcelProperty("物料编码")
+    private String itemCode;
+    
+    @Schema(description = "物料名称")
+    @ExcelProperty("物料名称")
+    private String itemName;
+    
+    @Schema(description = "物料类型")
+    @ExcelProperty("物料类型")
+    private Integer itemType;
+    
+    @Schema(description = "规格")
+    @ExcelProperty("规格")
+    private String spec;
+    
+    @Schema(description = "单位")
+    @ExcelProperty("单位")
+    private String unit;
+    
+    @Schema(description = "库存数量")
+    @ExcelProperty("库存数量")
+    private Integer stockCount;
 
     @Schema(description = "计划数量", requiredMode = Schema.RequiredMode.REQUIRED, example = "4797")
     @ExcelProperty("计划数量")

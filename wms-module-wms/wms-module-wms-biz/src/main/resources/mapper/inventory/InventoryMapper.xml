@@ -26,6 +26,8 @@
         i.deleted,
         w.warehouse_name AS warehouseName,
         l.location_name AS locationName,
+        l.area_id AS areaId,
+        l.rack_id AS rackId,
         m.item_name AS itemName,
         m.item_code AS itemCode,
         m.item_type AS itemType,
@@ -149,6 +151,20 @@
             </foreach>
         </if>
         ORDER BY i.id DESC
+    </select>
+
+    <select id="selectOldestInventoryByWarehouseAndItem" resultType="cn.smart.wms.module.wms.dal.dataobject.inventory.InventoryDO">
+        SELECT
+        <include refid="selectColumns"/>
+        FROM wms_inventory i
+        <include refid="joinTables"/>
+        WHERE i.warehouse_id = #{warehouseId}
+        AND i.item_id = #{itemId}
+        AND i.available_count >= #{requiredCount}
+        AND i.status = 0 <!-- 正常状态 -->
+        AND i.deleted = FALSE
+        ORDER BY i.create_time ASC <!-- 按照创建时间升序排序，获取最早入库的记录 -->
+        LIMIT 1
     </select>
 
 </mapper>
